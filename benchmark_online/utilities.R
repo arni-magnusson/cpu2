@@ -1,6 +1,6 @@
 library(ggplot2)
 
-company_colors <- c(Apple="#4D4D4D", Intel="#0072B2", AMD="#D55E00")
+company_colors <- c(Apple="#080808", Intel="#0072B2", AMD="#D55E00")
 
 plot_theme <- function() {
   theme_minimal(base_size=12) +

@@ -43,13 +43,14 @@ print(ggplot(companies, aes(x=Date, y=Speed, color=Company)) +
   scale_y_log10() +
   scale_color_manual(values=company_colors, breaks=c("Apple", "Intel", "AMD"),
                      name=NULL) +
+  guides(color=guide_legend(override.aes=list(linetype=0, linewidth=0, shape=19, size=2.2))) +
   labs(title="Single-thread performance with fitted trends",
        x=NULL, y=score) +
   plot_theme() + legend_inside)
 dev.off()
 
 # Lag between companies
-taf.png("companies_lag")
+taf.png("companies_lag", width=1200, height=1200)
 companies.lag$Company <- factor(companies.lag$Company,
                                 levels=c("Apple", "Intel", "AMD"))
 print(ggplot(companies.lag, aes(x=Company, y=Lag, fill=Company)) +

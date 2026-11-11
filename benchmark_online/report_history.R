@@ -23,6 +23,7 @@ history.rate <- read.taf("output/history_rate.csv")
 score <- "Score (PassMark single thread)"
 intel <- "History (Intel)"
 lwd <- 2
+history_date_limits <- range(history$Date)
 
 # Intel and AMD process
 taf.png("history_companies_nm", width=1200)
@@ -38,7 +39,8 @@ print(ggplot(history, aes(x=Date, y=nm, color=Company)) +
   scale_y_log10(breaks=values, labels=round(values)) +
   scale_color_manual(values=company_colors, breaks=c("Intel", "AMD"), name=NULL) +
   coord_cartesian(ylim=c(2.6, 200)) +
-  labs(title="Process size over time", x=NULL, y="Process (nm)") +
+  labs(title="Semiconductor technology over time", x=NULL,
+       y="Process node (nm)") +
   plot_theme() +
   theme(legend.position=c(0.98, 0.98),
         legend.justification=c(1, 1),
@@ -49,9 +51,11 @@ dev.off()
 taf.png("history_companies_speed", width=1200)
 print(ggplot(history, aes(x=Date, y=Speed, color=Company)) +
   geom_point(size=2.1, alpha=0.85) +
+  scale_x_date(limits=history_date_limits, date_breaks="10 years",
+               date_labels="%Y") +
   scale_y_log10() +
   scale_color_manual(values=company_colors, breaks=c("Intel", "AMD"), name=NULL) +
-  labs(title="Historical Intel and AMD performance", x=NULL, y=score) +
+  labs(title="History (Intel and AMD)", x=NULL, y=score) +
   plot_theme() + legend_inside)
 dev.off()
 
@@ -60,6 +64,8 @@ taf.png("history_data", width=1200)
 history.analysis$Period <- factor(history.analysis$Period, levels=c("Early", "Late"))
 print(ggplot(history.analysis, aes(x=Date, y=Speed, shape=Period)) +
   geom_point(color=company_colors["Intel"], size=2.2, stroke=1) +
+  scale_x_date(limits=history_date_limits, date_breaks="10 years",
+               date_labels="%Y") +
   scale_y_log10() +
   scale_shape_manual(values=c(Early=1, Late=16), name=NULL) +
   labs(title=intel, x=NULL, y=score) +
@@ -73,6 +79,8 @@ print(ggplot(history.analysis, aes(x=Date, y=Speed, shape=Period)) +
   geom_point(color=company_colors["Intel"], size=2.2, stroke=1) +
   geom_line(data=history.fit, aes(group=Period), inherit.aes=TRUE,
             color=company_colors["Intel"], linewidth=1) +
+  scale_x_date(limits=history_date_limits, date_breaks="10 years",
+               date_labels="%Y") +
   scale_y_log10() +
   scale_shape_manual(values=c(Early=1, Late=16), name=NULL) +
   labs(title=intel, x=NULL, y=score) +
