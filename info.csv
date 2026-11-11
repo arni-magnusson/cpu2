@@ -1,5 +1,5 @@
 machine,name,processor,year,cores,module,base,turbo,watt
-m4700,Dell Precision M4700,i7 3740QM,2012,4HT,DDR-1600,2.7,3.7,45
+m4700,Dell Precision M4700,i7 3740QM,2012,4HT,DDR3-1600,2.7,3.7,45
 p15gen1,Lenovo P15 Gen 1,i7 10875H,2020,8HT,DDR4-2933,2.3,5.1,45
 p3560,Dell Precision 3560,i7 1165G7,2020,4HT,DDR4-3200,2.8,4.7,28
 p1gen8,Lenovo P1 Gen 8,u9 285H,2025,6+8+2,LPDDR5X-7467,2.9,5.4,45
