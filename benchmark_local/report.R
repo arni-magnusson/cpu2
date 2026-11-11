@@ -15,19 +15,24 @@ memory.details <- read.taf("data/passmark.csv")
 passmark <- read.taf("output/passmark.csv")
 
 # Label machines
-machine_labels <- setNames(paste(info$name, info$processor, sep="\n"),
-                           info$machine)
+machine_labels <- setNames(
+  paste(info$name, paste("Intel", gsub(" ", "-", info$processor)), sep="\n"),
+  info$machine)
+machine_names <- setNames(info$name, info$machine)
 plot_theme <- theme_minimal(base_size=12) +
   theme(panel.grid.major.y=element_blank(),
         panel.grid.minor=element_blank(),
         plot.title=element_text(face="bold", hjust=0.5))
+quantity_colors <- c(single="#0072B2", multi="#D55E00",
+                     physical="#009E73", effective="#C4A000")
+machine_order <- c("m4700", "p3560", "p15gen1", "p1gen8")
 
 # Single thread
 single <- passmark[order(passmark$single),]
-single$machine <- reorder(single$machine, single$single)
+single$machine <- factor(single$machine, levels=machine_order)
 taf.png("cpu_benchmark")
 print(ggplot(single, aes(x=single, y=machine)) +
-  geom_col(fill="#0072B2", width=0.65) +
+  geom_col(fill=quantity_colors["single"], width=0.65) +
   scale_y_discrete(labels=machine_labels) +
   labs(title="Single-thread benchmark",
        x="Score (PassMark single thread)", y=NULL) +
@@ -36,10 +41,10 @@ dev.off()
 
 # Multithread
 multi <- passmark[order(passmark$multi),]
-multi$machine <- reorder(multi$machine, multi$multi)
+multi$machine <- factor(multi$machine, levels=machine_order)
 taf.png("cpu_multicore")
 print(ggplot(multi, aes(x=multi, y=machine)) +
-  geom_col(fill="#0072B2", width=0.65) +
+  geom_col(fill=quantity_colors["multi"], width=0.65) +
   scale_y_discrete(labels=machine_labels) +
   labs(title="Multithread benchmark",
        x="Score (PassMark multithread)", y=NULL) +
@@ -48,18 +53,19 @@ dev.off()
 
 # Effective cores
 effective <- passmark[order(passmark$effcores),]
-effective$machine <- factor(effective$machine, levels=effective$machine)
+effective$machine <- factor(effective$machine, levels=machine_order)
 effective_long <- rbind(
-  data.frame(machine=effective$machine, type="Physical", score=effective$physcores),
-  data.frame(machine=effective$machine, type="Effective index", score=effective$effcores))
+  data.frame(machine=effective$machine, type="Physical cores", score=effective$physcores),
+  data.frame(machine=effective$machine, type="Effective core index", score=effective$effcores))
 effective_long$type <- factor(effective_long$type,
-                              levels=c("Physical", "Effective index"))
+                              levels=c("Physical cores", "Effective core index"))
 taf.png("effective_cores")
 print(ggplot(effective_long, aes(x=score, y=machine, fill=type)) +
   geom_col(position=position_dodge(width=0.75, reverse=TRUE), width=0.65) +
   scale_y_discrete(labels=machine_labels) +
-  scale_fill_manual(values=c(Physical="#0072B2", `Effective index`="#D55E00"),
-                    breaks=c("Physical", "Effective index"), name=NULL) +
+  scale_fill_manual(values=c(`Physical cores`=unname(quantity_colors["physical"]),
+                             `Effective core index`=unname(quantity_colors["effective"])),
+                    breaks=c("Physical cores", "Effective core index"), name=NULL) +
   scale_x_continuous(expand=expansion(mult=c(0, 0.22))) +
   labs(title="Effective core index = multithread score / single-thread score",
        x="Cores / index", y=NULL) +
@@ -76,8 +82,9 @@ memory <- memory[order(memory$memory),]
 memory <- memory[c("machine", "memory", "database", "readcache", "read",
                    "write", "available", "latency", "threaded", "module",
                    "year")]
-labels <- setNames(paste0(machine_labels[memory$machine], "\n",
-                          memory$module, " - ", memory$year), memory$machine)
+labels <- setNames(paste0(machine_names[memory$machine], "\n",
+                          memory$module, " (", memory$year, ")"),
+                   memory$machine)
 memory$machine <- factor(memory$machine, levels=memory$machine)
 
 taf.png("memory_benchmark")
@@ -94,14 +101,33 @@ memory_long <- reshape(memory,
                        times=c("Read", "Write", "Latency"),
                        direction="long")
 memory_long$metric <- factor(memory_long$metric,
-                             levels=c("Read", "Write", "Latency"))
-taf.png("memory_details", 1600, 3600)
-print(ggplot(memory_long, aes(x=score, y=machine)) +
-  geom_col(fill="#0072B2", width=0.65) +
+                             levels=c("Read", "Write", "Latency"),
+                             labels=c("Read (MB/s)", "Write (MB/s)", "Latency (ns)"))
+memory_long$relative <- NA_real_
+for (metric in levels(memory_long$metric)) {
+  rows <- memory_long$metric == metric
+  scores <- memory_long$score[rows]
+  memory_long$relative[rows] <- if (metric == "Latency (ns)") {
+    min(scores) / scores * 100
+  } else {
+    scores / max(scores) * 100
+  }
+}
+taf.png("memory_details", 1600, 1200)
+print(ggplot(memory_long, aes(x=relative, y=machine, fill=metric)) +
+  geom_col(position=position_dodge(width=0.8, reverse=TRUE), width=0.72) +
+  geom_text(aes(label=format(score, big.mark=",", scientific=FALSE, trim=TRUE)),
+            position=position_dodge(width=0.8, reverse=TRUE),
+            hjust=-0.15, size=3.5) +
   scale_y_discrete(labels=labels) +
-  facet_wrap(~metric, ncol=1, scales="free_x") +
-  labs(title="Memory details", x="Score", y=NULL) +
+  scale_fill_manual(values=c("Read (MB/s)"="#0072B2",
+                             "Write (MB/s)"="#D55E00",
+                             "Latency (ns)"="#009E73"),
+                    breaks=c("Read (MB/s)", "Write (MB/s)", "Latency (ns)"),
+                    name=NULL) +
+  scale_x_continuous(limits=c(0, 125), breaks=seq(0, 100, 20)) +
+  labs(title="Memory details",
+       x="Relative performance (% of best result)", y=NULL) +
   plot_theme +
-  theme(strip.text=element_text(face="bold"),
-        strip.background=element_blank()))
+  theme(legend.position="top"))
 dev.off()
