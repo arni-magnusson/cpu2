@@ -6,6 +6,8 @@
 #         speed_medium.png (report)
 
 library(TAF)
+library(ggplot2)
+source("utilities.R")
 
 mkdir("report")
 
@@ -18,42 +20,62 @@ r7.low <- read.taf("output/r7_low.csv", colClasses=c(Date="Date"))
 
 # Prepare for plotting
 score <- "Score (PassMark single thread)"
+date_limits <- as.Date(c("2010-01-01", "2027-01-01"))
+date_breaks <- seq(date_limits[1], date_limits[2], by="2 years")
+
+plot_speed <- function(data, title) {
+  ggplot(data, aes(x=Date, y=Speed, color=Company, group=Company)) +
+    geom_line(linewidth=0.9) +
+    geom_point(size=1.8) +
+    scale_x_date(limits=date_limits, breaks=date_breaks, date_labels="%Y",
+                 expand=expansion(mult=0)) +
+    scale_y_log10() +
+    coord_cartesian(ylim=c(700, 4400)) +
+    scale_color_manual(values=company_colors, name=NULL) +
+    labs(title=title, x=NULL, y=score) +
+    plot_theme() + legend_inside
+}
 
 # Plot speed over time
+speed_all_data <- rbind(
+  transform(i7.high[-1,], Company="Intel", Power="High"),
+  transform(r7.high, Company="AMD", Power="High"),
+  transform(i7.medium, Company="Intel", Power="Medium"),
+  transform(i7.low[-1,], Company="Intel", Power="Low"),
+  transform(r7.low, Company="AMD", Power="Low"))
+speed_all_data$Power <- factor(speed_all_data$Power,
+                               levels=c("High", "Medium", "Low"))
 taf.png("speed_all", width=1200)
-plot(Speed~Date, i7.high[-1,], log="y", type="o", col=4, ylab=score,
-     xlim=as.Date(c("2010-01-01", "2027-01-01")), ylim=c(700, 4400))
-title("Intel and AMD (high/medium/low power)")
-lines(Speed~Date, r7.high, type="o", col=2)
-lines(Speed~Date, i7.medium, type="o", col=4)
-lines(Speed~Date, i7.low[-1,], type="o", col=4)
-lines(Speed~Date, r7.low, type="o", col=2)
-legend("topleft", legend=c("Intel", "AMD"), lty=1, pch=1, col=c(4,2), bty="n",
-       inset=0.02, y.intersp=1.25)
+print(ggplot(speed_all_data,
+             aes(x=Date, y=Speed, color=Company,
+                 linetype=Power, group=interaction(Company, Power))) +
+  geom_line(linewidth=0.9) +
+  geom_point(size=1.8) +
+  scale_x_date(limits=date_limits, breaks=date_breaks, date_labels="%Y",
+               expand=expansion(mult=0)) +
+  scale_y_log10() +
+  coord_cartesian(ylim=c(700, 4400)) +
+  scale_color_manual(values=company_colors, name="Company") +
+  scale_linetype_manual(values=c(High="solid", Medium="dashed", Low="dotted"),
+                        name="Power class") +
+  labs(title="Intel and AMD (high/medium/low power)",
+       x=NULL, y=score) +
+  plot_theme() + legend_inside)
 dev.off()
 
 taf.png("speed_high", width=1200)
-plot(Speed~Date, i7.high[-1,], log="y", type="o", col=4, ylab=score,
-     xlim=as.Date(c("2010-01-01", "2027-01-01")), ylim=c(700, 4400))
-title("Intel and AMD (high power)")
-lines(Speed~Date, r7.high, type="o", col=2)
-legend("topleft", legend=c("Intel", "AMD"), lty=1, pch=1, col=c(4,2), bty="n",
-       inset=0.02, y.intersp=1.25)
+high_data <- rbind(transform(i7.high[-1,], Company="Intel"),
+                   transform(r7.high, Company="AMD"))
+print(plot_speed(high_data, "Intel and AMD (high power)"))
 dev.off()
 
 taf.png("speed_low", width=1200)
-plot(Speed~Date, i7.low[-1,], log="y", type="o", col=4, ylab=score,
-     xlim=as.Date(c("2010-01-01", "2027-01-01")), ylim=c(700, 4400))
-title("Intel and AMD (low power)")
-lines(Speed~Date, r7.low, type="o", col=2)
-legend("topleft", legend=c("Intel", "AMD"), lty=1, pch=1, col=c(4,2), bty="n",
-       inset=0.02, y.intersp=1.25)
+low_data <- rbind(transform(i7.low[-1,], Company="Intel"),
+                  transform(r7.low, Company="AMD"))
+print(plot_speed(low_data, "Intel and AMD (low power)"))
 dev.off()
 
 taf.png("speed_medium", width=1200)
-plot(Speed~Date, i7.medium[-1,], log="y", type="o", col=4, ylab=score,
-     xlim=as.Date(c("2010-01-01", "2027-01-01")), ylim=c(700, 4400))
-title("Intel (medium power)")
-legend("topleft", legend=c("Intel"), lty=1, pch=1, col=c(4), bty="n",
-       inset=0.02, y.intersp=1.25)
+medium_data <- transform(i7.medium[-1,], Company="Intel")
+print(plot_speed(medium_data, "Intel (medium power)"))
 dev.off()

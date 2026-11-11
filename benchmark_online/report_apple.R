@@ -6,6 +6,8 @@
 #         companies_macbook.png (report)
 
 library(TAF)
+library(ggplot2)
+source("utilities.R")
 
 mkdir("report")
 
@@ -19,43 +21,54 @@ r7.high <- read.taf("output/r7_high.csv", colClasses=c(Date="Date"))
 
 # Prepare for plotting
 score <- "Score (PassMark single thread)"
-lwd <- 2
 
 # Companies: Apple vs Intel vs AMD
 taf.png("companies_data", width=1200)
-plot(Speed~Date, companies, type="n", log="y", ylab=score)
-points(Speed~Date, companies, subset=Company=="Apple", pch=19, col=1)
-points(Speed~Date, companies, subset=Company=="Intel", pch=19, col=4)
-points(Speed~Date, companies, subset=Company=="AMD", pch=19, col=2)
-legend("topleft", legend=c("Apple", "Intel", "AMD"), pch=19, col=c(1,4,2),
-       bty="n", inset=0.02, y.intersp=1.25)
+print(ggplot(companies, aes(x=Date, y=Speed, color=Company)) +
+  geom_point(size=2.2, alpha=0.85) +
+  scale_y_log10() +
+  scale_color_manual(values=company_colors, breaks=c("Apple", "Intel", "AMD"),
+                     name=NULL) +
+  labs(title="Single-thread CPU performance",
+       x=NULL, y=score) +
+  plot_theme() + legend_inside)
 dev.off()
 
 # Companies with fitted regression lines
 taf.png("companies_fit", width=1200)
-plot(Speed~Date, companies, type="n", log="y", ylab=score)
-points(Speed~Date, companies, subset=Company=="Apple", pch=19, col=1)
-points(Speed~Date, companies, subset=Company=="Intel", pch=19, col=4)
-points(Speed~Date, companies, subset=Company=="AMD", pch=19, col=2)
-lines(Speed~Date, companies.fit, subset=Company=="Apple", lwd=lwd, col=1)
-lines(Speed~Date, companies.fit, subset=Company=="Intel", lwd=lwd, col=4)
-lines(Speed~Date, companies.fit, subset=Company=="AMD", lwd=lwd, col=2)
-legend("topleft", legend=c("Apple", "Intel", "AMD"), pch=19, col=c(1,4,2),
-       bty="n", inset=0.02, y.intersp=1.25)
+print(ggplot(companies, aes(x=Date, y=Speed, color=Company)) +
+  geom_point(size=2.2, alpha=0.85) +
+  geom_line(data=companies.fit,
+            aes(group=Company), linewidth=1.1, inherit.aes=TRUE) +
+  scale_y_log10() +
+  scale_color_manual(values=company_colors, breaks=c("Apple", "Intel", "AMD"),
+                     name=NULL) +
+  labs(title="Single-thread performance with fitted trends",
+       x=NULL, y=score) +
+  plot_theme() + legend_inside)
 dev.off()
 
 # Lag between companies
 taf.png("companies_lag")
-companies.lag$Company <- reorder(companies.lag$Company, companies.lag$Lag)
-barplot(Lag~Company, companies.lag, xlab="", ylab="Lag (yrs)", col=0, border=NA)
-grid(NA, NULL, lty=1)
-barplot(Lag~Company, companies.lag, add=TRUE, col=c(1,4,2))
-title(main="Lag until company reaches the CPU performance of the best company")
+companies.lag$Company <- factor(companies.lag$Company,
+                                levels=c("Apple", "Intel", "AMD"))
+print(ggplot(companies.lag, aes(x=Company, y=Lag, fill=Company)) +
+  geom_col(width=0.65) +
+  scale_fill_manual(values=company_colors, guide="none") +
+  labs(title="Lag until each company reaches the leader",
+       x=NULL, y="Lag (years)") +
+  plot_theme() +
+  theme(panel.grid.major.x=element_blank()))
 dev.off()
 
 # MacBook Air vs Pro
 taf.png("companies_macbook", width=1200)
-plot(Speed~Date, apple, log="y", pch=c(1,19), ylab=score, main="Apple MacBook")
-legend("topleft", legend=c("Pro", "Air"), pch=c(19,1), bty="n", inset=0.02,
-       y.intersp=1.25)
+apple$Type <- ifelse(grepl("Pro", apple$Model), "Pro", "Air")
+apple$Type <- factor(apple$Type, levels=c("Pro", "Air"))
+print(ggplot(apple, aes(x=Date, y=Speed, shape=Type)) +
+  geom_point(color=company_colors["Apple"], size=2.4, stroke=1) +
+  scale_y_log10() +
+  scale_shape_manual(values=c(Pro=16, Air=1), name=NULL) +
+  labs(title="Apple MacBook performance", x=NULL, y=score) +
+  plot_theme() + legend_inside)
 dev.off()

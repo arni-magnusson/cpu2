@@ -7,6 +7,8 @@
 #         history_time.png (report)
 
 library(TAF)
+library(ggplot2)
+source("utilities.R")
 
 mkdir("report")
 
@@ -24,57 +26,75 @@ lwd <- 2
 
 # Intel and AMD process
 taf.png("history_companies_nm", width=1200)
-plot(nm~Date, history, log="y", type="n", ylim=c(2.6,200), yaxt="n",
-     ylab="Process nm")
 values <- c(3, 4, 5.8, 7.2, 10, 14, 22, 28, 35, 45, 65, 90, 130, 180)
-axis(2, values, round(values), las=1)
-points(nm~Date, history, subset=Company=="AMD", pch=19, col=2)
-points(nm~Date, history, subset=Company=="Intel", pch=19, col=4)
-lines(aggregate(Date~nm, history, min, subset=Company=="AMD")[2:1],
-      lwd=2, col=2)
-lines(aggregate(Date~nm, history, min, subset=Company=="Intel")[2:1],
-      lwd=2, col=4)
-legend("topright", legend=c("Intel", "AMD"), pch=19, col=c(4, 2), bty="n",
-       inset=0.02, y.intersp=1.25)
+amd_nm <- aggregate(Date~nm, history, min, subset=Company=="AMD")
+intel_nm <- aggregate(Date~nm, history, min, subset=Company=="Intel")
+print(ggplot(history, aes(x=Date, y=nm, color=Company)) +
+  geom_point(size=2.1, alpha=0.85) +
+  geom_line(data=amd_nm, aes(x=Date, y=nm, group=1, color="AMD"),
+            inherit.aes=FALSE, linewidth=1) +
+  geom_line(data=intel_nm, aes(x=Date, y=nm, group=1, color="Intel"),
+            inherit.aes=FALSE, linewidth=1) +
+  scale_y_log10(breaks=values, labels=round(values)) +
+  scale_color_manual(values=company_colors, breaks=c("Intel", "AMD"), name=NULL) +
+  coord_cartesian(ylim=c(2.6, 200)) +
+  labs(title="Process size over time", x=NULL, y="Process (nm)") +
+  plot_theme() +
+  theme(legend.position=c(0.98, 0.98),
+        legend.justification=c(1, 1),
+        legend.background=element_rect(fill="white", color=NA)))
 dev.off()
 
 # Intel and AMD speed
 taf.png("history_companies_speed", width=1200)
-plot(Speed~Date, history, type="n", log="y", ylab=score)
-points(Speed~Date, history, subset=Company=="AMD", pch=19, col=2)
-points(Speed~Date, history, subset=Company=="Intel", pch=19, col=4)
-legend("topleft", legend=c("Intel", "AMD"), pch=19, col=c(4, 2), bty="n",
-       inset=0.02, y.intersp=1.25)
+print(ggplot(history, aes(x=Date, y=Speed, color=Company)) +
+  geom_point(size=2.1, alpha=0.85) +
+  scale_y_log10() +
+  scale_color_manual(values=company_colors, breaks=c("Intel", "AMD"), name=NULL) +
+  labs(title="Historical Intel and AMD performance", x=NULL, y=score) +
+  plot_theme() + legend_inside)
 dev.off()
 
 # Intel observations
 taf.png("history_data", width=1200)
-plot(Speed~Date, history, type="n", log="y", main=intel, ylab=score)
-points(Speed~Date, history.analysis, subset=Period=="Early", col=4)
-points(Speed~Date, history.analysis, subset=Period=="Late", pch=19, col=4)
-legend("topleft", legend=c("Early", "Late"), pch=c(1, 19), col=4, bty="n",
-       inset=0.02, y.intersp=1.25)
+history.analysis$Period <- factor(history.analysis$Period, levels=c("Early", "Late"))
+print(ggplot(history.analysis, aes(x=Date, y=Speed, shape=Period)) +
+  geom_point(color=company_colors["Intel"], size=2.2, stroke=1) +
+  scale_y_log10() +
+  scale_shape_manual(values=c(Early=1, Late=16), name=NULL) +
+  labs(title=intel, x=NULL, y=score) +
+  plot_theme() + legend_inside)
 dev.off()
 
 # Intel trends
 taf.png("history_fit", width=1200)
-plot(Speed~Date, history, type="n", log="y", main=intel, ylab=score)
-points(Speed~Date, history.analysis, subset=Period=="Early", col=4)
-points(Speed~Date, history.analysis, subset=Period=="Late", pch=19, col=4)
-lines(Speed~Date, history.fit, subset=Period=="Early", col=4)
-lines(Speed~Date, history.fit, subset=Period=="Late", col=4)
-legend("topleft", legend=c("Early", "Late"), pch=c(1, 19), col=4, bty="n",
-       inset=0.02, y.intersp=1.25)
+history.fit$Period <- factor(history.fit$Period, levels=c("Early", "Late"))
+print(ggplot(history.analysis, aes(x=Date, y=Speed, shape=Period)) +
+  geom_point(color=company_colors["Intel"], size=2.2, stroke=1) +
+  geom_line(data=history.fit, aes(group=Period), inherit.aes=TRUE,
+            color=company_colors["Intel"], linewidth=1) +
+  scale_y_log10() +
+  scale_shape_manual(values=c(Early=1, Late=16), name=NULL) +
+  labs(title=intel, x=NULL, y=score) +
+  plot_theme() + legend_inside)
 dev.off()
 
 # Intel annual improvement
 taf.png("history_rate", width=1200)
-barplot(100*Annual~Period, history.rate, col=5:4, main=intel,
-        ylab="Annual improvement (%)")
+history.rate$Period <- factor(history.rate$Period, levels=c("Early", "Late"))
+history.rate$AnnualPercent <- 100*history.rate$Annual
+print(ggplot(history.rate, aes(x=Period, y=AnnualPercent, fill=Period)) +
+  geom_col(width=0.65) +
+  scale_fill_manual(values=c(Early="#56B4E9", Late="#0072B2"), guide="none") +
+  labs(title=intel, x=NULL, y="Annual improvement (%)") +
+  plot_theme() + theme(panel.grid.major.x=element_blank()))
 dev.off()
 
 # Intel doubling time
 taf.png("history_time", width=1200)
-barplot(Doubling~Period, history.rate, col=5:4, main=intel,
-        ylab="Doubling time (yr)")
+print(ggplot(history.rate, aes(x=Period, y=Doubling, fill=Period)) +
+  geom_col(width=0.65) +
+  scale_fill_manual(values=c(Early="#56B4E9", Late="#0072B2"), guide="none") +
+  labs(title=intel, x=NULL, y="Doubling time (years)") +
+  plot_theme() + theme(panel.grid.major.x=element_blank()))
 dev.off()
