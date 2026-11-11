@@ -1,0 +1,31 @@
+#!/bin/bash
+shopt -s expand_aliases
+alias help='echo "Usage: "cpufreq [-r]'
+if [[ "$1" == "--help" ]]; then help; exit; fi
+################################################################################
+###                                                                            #
+### Script:   cpufreq [-r]                                                     #
+###                                                                            #
+### Purpose:  Show current CPU frequency of each core                          #
+###                                                                            #
+### Args:     r shows range, only the lowest and highest frequency             #
+###                                                                            #
+### Returns:  CPU frequency                                                    #
+###                                                                            #
+################################################################################
+
+range=0
+while getopts "r" A; do
+  case $A in
+    r) range=1;;
+  esac
+done
+shift $((OPTIND-1))
+
+if [[ $range == 0 ]]; then
+  cat /proc/cpuinfo | grep --color=never MHz | cut -c12-15 | sed 's/\.$//' | \
+    xargs printf "%4d\n" | sort -n | tac
+else
+  cat /proc/cpuinfo | grep --color=never MHz | cut -c12-15 | sed 's/\.$//' | \
+    xargs printf "%4d\n" | sort -n | sed -n '1p;$p' | paste -s
+fi

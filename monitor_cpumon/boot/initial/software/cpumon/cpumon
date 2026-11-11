@@ -1,0 +1,36 @@
+#!/bin/bash
+shopt -s expand_aliases
+alias help='echo "Usage: "cpumon [-d duration] [-i interval]'
+if [[ "$1" == "--help" ]]; then help; exit; fi
+################################################################################
+###                                                                            #
+### Script:   cpumon [-d duration] [-i interval]                               #
+###                                                                            #
+### Purpose:  Monitor CPU frequence, temperature, and fan speed                #
+###                                                                            #
+### Args:     duration is how long to monitor in seconds (default 400)         #
+###           interval is the update interval in seconds (default 1)           #
+###                                                                            #
+### Requires: cpustatus                                                        #
+###                                                                            #
+### Returns:  Shows CPU status updates                                         #
+###                                                                            #
+################################################################################
+
+duration=400
+interval=1
+while getopts "d:i:" A; do
+  case $A in
+    d) duration=$OPTARG;;
+    i) interval=$OPTARG;;
+  esac
+done
+
+header=Time,`cpustatus -h`
+echo $header
+
+while (( $SECONDS <= $duration )); do
+  values=$SECONDS,`cpustatus -s`
+  echo $values
+  sleep $interval
+done

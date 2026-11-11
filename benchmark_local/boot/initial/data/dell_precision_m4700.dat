@@ -1,0 +1,26 @@
+                   PassMark PerformanceTest Linux (11.0.1004)
+
+
+Intel(R) Core(TM) i7-3740QM CPU @ 2.70GHz (x86_64)
+4 cores @ 7 MHz  |  15.6 GiB RAM
+Number of Processes: 8  |  Test Iterations: 1  |  Test Duration: Medium
+--------------------------------------------------------------------------------
+CPU Mark:                          6757
+  Integer Math                     23059 Million Operations/s
+  Floating Point Math              11558 Million Operations/s
+  Prime Numbers                    29.3 Million Primes/s
+  Sorting                          15538 Thousand Strings/s
+  Encryption                       2201 MB/s
+  Compression                      107935 KB/s
+  CPU Single Threaded              2128 Million Operations/s
+  Physics                          472 Frames/s
+  Extended Instructions (SSE)      4244 Million Matrices/s
+
+Memory Mark:                       2422
+  Database Operations              2744 Thousand Operations/s
+  Memory Read Cached               24419 MB/s
+  Memory Read Uncached             15460 MB/s
+  Memory Write                     9587 MB/s
+  Available RAM                    10155 Megabytes
+  Memory Latency                   43 Nanoseconds
+  Memory Threaded                  21873 MB/s

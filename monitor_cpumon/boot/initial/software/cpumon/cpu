@@ -1,0 +1,34 @@
+#!/bin/bash
+shopt -s expand_aliases
+alias help='echo "Usage: "cpu [-i interval] [-r]'
+if [[ "$1" == "--help" ]]; then help; exit; fi
+################################################################################
+###                                                                            #
+### Script:   cpu [-i interval] [-r]                                           #
+###                                                                            #
+### Purpose:  Watch CPU frequency, temperature, and fan speed                  #
+###                                                                            #
+### Args:     interval is the update interval in seconds (default 1)           #
+###           r shows range, only the lowest and highest value                 #
+###                                                                            #
+### Requires: cpustatus                                                        #
+###                                                                            #
+### Returns:  CPU frequency, temperature, and fan speed                        #
+###                                                                            #
+################################################################################
+
+interval=1
+range=0
+while getopts "i:r" A; do
+  case $A in
+    i) interval=$OPTARG;;
+    r) range=1;;
+  esac
+done
+shift $((OPTIND-1))
+
+if [[ $range == 0 ]]; then
+  watch -n $interval -t ~/bin/cpustatus
+else
+  watch -n $interval -t ~/bin/cpustatus -r
+fi

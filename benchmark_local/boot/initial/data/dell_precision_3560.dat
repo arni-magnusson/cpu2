@@ -1,0 +1,26 @@
+                   PassMark PerformanceTest Linux (11.0.1004)
+
+
+11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz (x86_64)
+4 cores @ 1700 MHz  |  31.1 GiB RAM
+Number of Processes: 8  |  Test Iterations: 1  |  Test Duration: Medium
+--------------------------------------------------------------------------------
+CPU Mark:                          11266
+  Integer Math                     38737 Million Operations/s
+  Floating Point Math              20413 Million Operations/s
+  Prime Numbers                    49.3 Million Primes/s
+  Sorting                          16773 Thousand Strings/s
+  Encryption                       7284 MB/s
+  Compression                      119601 KB/s
+  CPU Single Threaded              2917 Million Operations/s
+  Physics                          826 Frames/s
+  Extended Instructions (SSE)      6265 Million Matrices/s
+
+Memory Mark:                       3152
+  Database Operations              3662 Thousand Operations/s
+  Memory Read Cached               30555 MB/s
+  Memory Read Uncached             17127 MB/s
+  Memory Write                     13167 MB/s
+  Available RAM                    25426 Megabytes
+  Memory Latency                   39 Nanoseconds
+  Memory Threaded                  41528 MB/s
