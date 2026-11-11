@@ -4,6 +4,7 @@
 # After:  speed.csv, speed.png (report)
 
 library(TAF)
+library(ggplot2)
 
 mkdir("report")
 
@@ -16,11 +17,15 @@ catage$machine <- reorder(catage$machine, catage$speed, median)
 # Prepare plot
 labels <- c("Short", "Sustained")
 
-# Barplot
+# Bar plot
 taf.png("speed")
-barplot(xtabs(speed~job+machine, catage), beside=TRUE, legend=TRUE,
-        args.legend=list(x="topleft", legend=labels, bty="n", inset=0.02),
-        main="Speed measurements", ylab="Speed (model iterations / sec)")
+print(ggplot(catage, aes(x=machine, y=speed, fill=job)) +
+  geom_col(position=position_dodge()) +
+  scale_fill_discrete(name=NULL, labels=labels) +
+  labs(title="Speed measurements", y="Speed (model iterations / sec)", x=NULL) +
+  theme(legend.position=c(0.05, 0.95),
+        legend.justification=c(0, 1),
+        legend.background=element_blank()))
 dev.off()
 
 # Prepare summary table
