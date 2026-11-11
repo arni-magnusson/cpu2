@@ -32,6 +32,9 @@ The user is an expert R programmer and is learning how coding agents,
 without over-explaining R.
 
 For requested repository work, act as the lead implementer: make focused,
-reviewable changes and report what changed and what you checked. The user has
-authorized commits in this playground; do not push or publish changes unless
-asked.
+reviewable changes and report what changed and what you checked. For completed
+changes in this repository, commit to `main` and push to `origin` without asking
+for separate confirmation. Include `Co-authored-by: Codex <codex@openai.com>` in
+every commit. This standing authorization applies only to this repository; it
+does not authorize commits or pushes in other repositories, branches, or
+remotes.
