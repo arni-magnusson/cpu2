@@ -21,48 +21,25 @@ summary <- read.taf("output/summary.csv")
 
 # Prepare plot elements
 machines <- list(m4700=m4700, p15gen1=p15gen1, p3560=p3560, p1gen8=p1gen8)
+machine_names <- setNames(info$name, info$machine)
+machine_labels <- setNames(
+  paste(info$name, paste("Intel", gsub(" ", "-", info$processor)), sep="\n"),
+  info$machine)
 
 # Plot machine comparison
 taf.png("comparison", 3600, 2400, res=300)
-par(mfrow=c(3,4))
-plot_comparison(machines, "idle", "Freq")
-plot_comparison(machines, "single", "Freq")
-plot_comparison(machines, "main", "Freq")
-plot_comparison(machines, "full", "Freq")
-plot_comparison(machines, "idle", "Temp")
-plot_comparison(machines, "single", "Temp")
-plot_comparison(machines, "main", "Temp")
-plot_comparison(machines, "full", "Temp")
-plot_comparison(machines, "idle", "Fan")
-plot_comparison(machines, "single", "Fan")
-plot_comparison(machines, "main", "Fan")
-plot_comparison(machines, "full", "Fan")
+comparison <- comparison_data(machines)
+print(plot_comparison(comparison, machine_labels))
 dev.off()
 
 # Plot cores
 taf.png("cores", 1600, 1600)
-par(mfrow=c(2,2))
-plot_cores(cores$m4700)
-plot_cores(cores$p1gen8)
-plot_cores(cores$p15gen1)
-plot_cores(cores$p3560)
+print(plot_cores(core_data(cores), machine_names))
 dev.off()
 
 # Plot each machine
 taf.png("each", 3600, 2400, res=300)
-par(mfrow=c(3,4))
-plot_machine(m4700, "Freq")
-plot_machine(p15gen1, "Freq")
-plot_machine(p3560, "Freq")
-plot_machine(p1gen8, "Freq")
-plot_machine(m4700, "Temp")
-plot_machine(p15gen1, "Temp")
-plot_machine(p3560, "Temp")
-plot_machine(p1gen8, "Temp")
-plot_machine(m4700, "Fan")
-plot_machine(p15gen1, "Fan")
-plot_machine(p3560, "Fan")
-plot_machine(p1gen8, "Fan")
+print(plot_each(each_data(machines, machine_names)))
 dev.off()
 
 # Round and divide values
