@@ -1,6 +1,6 @@
 # Repository guidance
 
-This repository is a playground with two main objectives:
+This repository is a playground with three main objectives:
 
 1. Teach Arni how to use AGENTS.md and SKILL.md that puts Codex in the driver
    seat, writing and committing code.
@@ -8,6 +8,9 @@ This repository is a playground with two main objectives:
 2. Teach Codex how to write or modify TAF workflows, producing an agent TAF
    skill that might become transferable to other projects or even useful for
    other human TAF users.
+
+3. Test Codex ability to modify an existing TAF workflow by converting base R
+   plots to ggplot2 plots, while maintaining the integrity of the workflows.
 
 Most TAF repositories have one workflow, but the `cpu2` repository contains
 several TAF workflows. The root README describes the TAF analyses, all of which
