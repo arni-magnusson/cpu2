@@ -5,6 +5,7 @@
 #         regression.png, speed.png (report)
 
 library(TAF)
+library(ggplot2)
 
 mkdir("report")
 
@@ -23,41 +24,57 @@ passmark$processor <- ordered(passmark$processor, passmark$processor)
 regression$processor <- ordered(regression$processor, regression$processor)
 
 # Plot benchmark results
+benchmark <- rbind(data.frame(processor=passmark$processor,
+                              source="Local", score=passmark$local),
+                   data.frame(processor=passmark$processor,
+                              source="Online", score=passmark$online))
+benchmark$source <- factor(benchmark$source, levels=c("Local", "Online"))
+benchmark.plot <- ggplot(benchmark, aes(x=processor, y=score, fill=source)) +
+  geom_col(position=position_dodge(width=0.8), width=0.7, colour="black") +
+  scale_fill_manual(values=c(Local="gray", Online="white")) +
+  labs(title="Synthetic benchmark results", x=NULL,
+       y="Score (PassMark single thread)", fill=NULL) +
+  theme_minimal() +
+  theme(legend.position="top")
 taf.png("benchmark")
-z <- barplot(local~processor, passmark, main="Synthetic benchmark results",
-             xlab="", ylab="Score (PassMark single thread)")
-x1 <- z - 0.2
-x2 <- z + 0.2
-segments(x1, passmark$online, x2, passmark$online, lwd=3)
-legend("topleft", c("Local", "Online"), fill=c("gray", "white"),
-       border=c("black", "white"), lty=c(0, 1), pch=c(NA, NA), lwd=2, bty="n",
-       inset=0.02, y.intersp=1.25)
+print(benchmark.plot)
 dev.off()
 
 # Plot regression results
 xlim <- c(0.9, 1.1) * range(regression$passmark)
 ylim <- c(0.95, 1.05) * range(regression$actual)
+regression.plot <- ggplot(regression, aes(x=passmark, y=actual)) +
+  geom_abline(intercept=0, slope=regression$slope[1], linetype="dashed") +
+  geom_point() +
+  geom_text(aes(label=processor), vjust=-0.7, size=3) +
+  coord_cartesian(xlim=xlim, ylim=ylim) +
+  labs(title="Actual speed vs. expectation based on synthetic benchmark",
+       x="Synthetic benchmark score",
+       y="Actual speed (model iterations / sec)") +
+  theme_minimal()
 taf.png("regression")
-plot(actual~passmark, regression, pch=19, xlim=xlim, ylim=ylim,
-     main="Actual speed vs. expectation based on synthetic benchmark",
-     xlab="Synthetic benchmark score",
-     ylab="Actual speed (model iterations / sec)")
-abline(a=0, b=regression$slope[1], lty=2)
-text(actual~passmark, regression, processor, pos=3, cex=0.8)
+print(regression.plot)
 dev.off()
 
 # Plot speed results
+speed <- rbind(data.frame(processor=catage$processor,
+                          estimate="Actual", speed=catage$speed),
+               data.frame(processor=catage$processor,
+                          estimate="Expectation, based on\nlocal synthetic benchmark",
+                          speed=catage$expected))
+speed$estimate <- factor(speed$estimate,
+                         levels=c("Actual",
+                                  "Expectation, based on\nlocal synthetic benchmark"))
+speed.plot <- ggplot(speed, aes(x=processor, y=speed, fill=estimate)) +
+  geom_col(position=position_dodge(width=0.8), width=0.7, colour="black") +
+  scale_fill_manual(values=c("Actual"="gray",
+                             "Expectation, based on\nlocal synthetic benchmark"="white")) +
+  labs(title="Actual speed vs. expectation based on synthetic benchmark",
+       x=NULL, y="Speed (model iterations / sec)", fill=NULL) +
+  theme_minimal() +
+  theme(legend.position="top")
 taf.png("speed")
-z <- barplot(speed~processor, catage,
-             main="Actual speed vs. expectation based on synthetic benchmark",
-             xlab="", ylab="Speed (model iterations / sec)")
-x1 <- z - 0.2
-x2 <- z + 0.2
-segments(x1, catage$expected, x2, catage$expected, lwd=3)
-legend("topleft", c("Actual",
-                    "Expectation, based on\nlocal synthetic benchmark"),
-       fill=c("gray", "white"), border=c("black", "white"), lty=c(0, 1),
-       pch=c(NA, NA), lwd=2, bty="n", inset=0.02, y.intersp=1.25)
+print(speed.plot)
 dev.off()
 
 # Round tables
