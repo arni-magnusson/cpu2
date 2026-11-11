@@ -139,17 +139,17 @@ The integrity of a TAF workflow can be checked as follows:
    and contain some files.
 
 The AI agent should check workflow integrity before making any changes to the
-scripts. If the check fails, the AI agent should notify the user who will
+scripts. If the check fails, the AI agent should notify the developer who will
 collaborate with the AI agent to find out what needs to be improved.
 
 ## Editing the TAF scripts
 
 If a workflow passes the integrity check, the AI agent can edit the TAF scripts
-if instructed by the user. Use base R, unless the user has asked that certain
-packages should be used.
+if instructed by the developer. Use base R, unless the developer has asked that
+certain packages should be used.
 
 The AI agent should check workflow integrity while making any changes to the
 scripts. If the check fails, the AI agent should try again to implement the
-features requested by the user without breaking the workflow integrity. If no
-solution can be found, the AI agent should notify the user who will collaborate
-with the AI agent to find out what needs to be improved.
+features requested by the developer without breaking the workflow integrity. If
+no solution can be found, the AI agent should notify the developer who will
+collaborate with the AI agent to find out what needs to be improved.
