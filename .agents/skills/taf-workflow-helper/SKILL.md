@@ -25,5 +25,6 @@ Help the scientist make progress while keeping the analysis understandable and r
 ## Run and troubleshoot
 
 - Diagnose errors from their actual messages and the project's files. Separate setup problems, missing inputs, workflow-code problems, and scientific questions.
-- Before running a workflow, inspect its boot/setup files and understand which generated directories or files it may replace. Use the project's documented invocation; a common TAF invocation is `library(TAF); taf.boot(); source.taf()` from the appropriate workflow directory.
+- Before running a workflow, inspect its boot/setup files and understand which generated directories or files it may replace. Use the project's documented invocation; a common way to run the complete workflow from its directory is `library(TAF); taf.boot(); source.all()`.
+- Use `source.taf(script)` when the task is to run one specified TAF script rather than the complete workflow.
 - Report what ran and what succeeded or failed. Do not claim an analysis is reproducible or validated solely because its scripts look like a TAF workflow.
