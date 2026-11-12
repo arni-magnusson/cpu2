@@ -1,0 +1,2 @@
+machine,cpu,int,float,prime,sort,encrypt,compress,single,physics,sse,memory,database,readcache,read,write,available,latency,threaded
+p15gen1,15842,54935,34952,60.1,28230,6516,207318,2851,1070,10431,3619,6631,29865,17719,15622,28184,29,36502

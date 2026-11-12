@@ -1,0 +1,2 @@
+machine,cpu,int,float,prime,sort,encrypt,compress,single,physics,sse,memory,database,readcache,read,write,available,latency,threaded
+p3560,11266,38737,20413,49.3,16773,7284,119601,2917,826,6265,3152,3662,30555,17127,13167,25426,39,41528

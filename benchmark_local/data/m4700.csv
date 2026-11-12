@@ -1,0 +1,2 @@
+machine,cpu,int,float,prime,sort,encrypt,compress,single,physics,sse,memory,database,readcache,read,write,available,latency,threaded
+m4700,6757,23059,11558,29.3,15538,2201,107935,2128,472,4244,2422,2744,24419,15460,9587,10155,43,21873

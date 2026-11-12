@@ -1,0 +1,2 @@
+machine,cpu,int,float,prime,sort,encrypt,compress,single,physics,sse,memory,database,readcache,read,write,available,latency,threaded
+p1gen8,44131,107076,129669,309,60009,36512,450364,4845,4074,31827,3234,10507,38236,17481,14520,47520,52,83504
