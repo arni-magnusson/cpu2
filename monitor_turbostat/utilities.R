@@ -1,6 +1,7 @@
 library(ggplot2)
 
 machine_order <- c("p1gen8", "p15gen1", "p3560", "m4700")
+machine_legend_order <- c("m4700", "p15gen1", "p3560", "p1gen8")
 machine_colors <- c(p1gen8="#0072B2", p15gen1="#D55E00",
                     p3560="#009E73", m4700="#C4A000")
 workload_order <- c("idle", "single", "main", "full")
@@ -82,8 +83,8 @@ plot_comparison <- function(data, machine_labels) {
     geom_point(size=0.45, alpha=0.7, key_glyph=draw_key_path) +
     facet_wrap(~panel, ncol=4, scales="free_y",
                labeller=as_labeller(attr(data, "panel_labels"))) +
-    scale_color_manual(values=machine_colors, breaks=machine_order,
-                       labels=machine_labels[machine_order]) +
+    scale_color_manual(values=machine_colors, breaks=machine_legend_order,
+                       labels=machine_labels[machine_legend_order]) +
     guides(color=guide_legend(override.aes=list(linetype=1,
                                                 linewidth=1.2, alpha=1))) +
     scale_x_continuous(limits=c(0, 300), breaks=seq(0, 300, 100)) +
