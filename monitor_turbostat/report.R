@@ -18,70 +18,21 @@ p3560 <- readRDS("model/p3560.rds")
 summary <- read.taf("output/summary.csv")
 
 # Prepare plot elements
-iter <- seq(1:nrow(m4700$idle))
 machines <- list(m4700=m4700, p15gen1=p15gen1, p3560=p3560, p1gen8=p1gen8)
+machine_names <- setNames(info$name, info$machine)
+machine_labels <- setNames(
+  paste(info$name, paste("Intel", gsub(" ", "-", info$processor)), sep="\n"),
+  info$machine)
 
-# Smooth m4700
-smooth_m4700 <- m4700
-smooth_m4700$full$Watt <- mean(m4700$full$Watt)
-smooth_m4700$main$Watt <- mean(m4700$main$Watt)
-smooth_m4700$single$Watt <- mean(m4700$single$Watt)
-smooth_m4700$idle$Watt <- mean(m4700$idle$Watt)
-
-# Smooth p1gen8
-smooth_p1gen8 <- p1gen8
-smooth_p1gen8$full$Watt <- loess(Watt~iter, p1gen8$full, span=0.4)$fitted
-smooth_p1gen8$main$Watt <- loess(Watt~iter, p1gen8$main, span=0.4)$fitted
-smooth_p1gen8$single$Watt <- loess(Watt~iter, p1gen8$single, span=0.6)$fitted
-smooth_p1gen8$idle$Watt <- mean(p1gen8$idle$Watt)
-
-# Smooth p15gen1
-smooth_p15gen1 <- p15gen1
-smooth_p15gen1$full$Watt <- loess(Watt~iter, p15gen1$full, span=0.9)$fitted
-smooth_p15gen1$main$Watt <- loess(Watt~iter, p15gen1$main, span=0.9)$fitted
-smooth_p15gen1$single$Watt <- loess(Watt~iter, p15gen1$single, span=0.9)$fitted
-mean(p15gen1$idle$Watt)
-
-# Smooth p3560
-smooth_p3560 <- p3560
-smooth_p3560$full$Watt <- loess(Watt~iter, p3560$full, span=0.11)$fitted
-smooth_p3560$main$Watt <- loess(Watt~iter, p3560$main, span=0.21)$fitted
-stable <- replace(p3560$single$Watt, 120:300, mean(p3560$single$Watt[120:300]))
-smooth_p3560$single$Watt <- loess(stable~iter, span=0.30)$fitted
-smooth_p3560$idle <- mean(p3560$idle$Watt)
+# Plot machine comparison
+comparison <- comparison_data(machines)
+taf.png("comparison", 3600, 2400, res=300)
+print(plot_comparison(comparison, machine_labels))
+dev.off()
 
 # Plot each machine
 taf.png("each", 3600, 2400, res=300)
-par(mfrow=c(3,4))
-plot_machine(m4700, "Freq")
-plot_machine(p15gen1, "Freq")
-plot_machine(p3560, "Freq")
-plot_machine(p1gen8, "Freq")
-plot_machine(m4700, "Temp")
-plot_machine(p15gen1, "Temp")
-plot_machine(p3560, "Temp")
-plot_machine(p1gen8, "Temp")
-plot_machine(m4700, "Watt")
-plot_machine(p15gen1, "Watt")
-plot_machine(p3560, "Watt")
-plot_machine(p1gen8, "Watt")
-dev.off()
-
-# Plot machine comparison
-taf.png("comparison", 3600, 2400, res=300)
-par(mfrow=c(3,4))
-plot_comparison(machines, "idle", "Freq")
-plot_comparison(machines, "single", "Freq")
-plot_comparison(machines, "main", "Freq")
-plot_comparison(machines, "full", "Freq")
-plot_comparison(machines, "idle", "Temp")
-plot_comparison(machines, "single", "Temp")
-plot_comparison(machines, "main", "Temp")
-plot_comparison(machines, "full", "Temp")
-plot_comparison(machines, "idle", "Watt")
-plot_comparison(machines, "single", "Watt")
-plot_comparison(machines, "main", "Watt")
-plot_comparison(machines, "full", "Watt")
+print(plot_each(each_data(machines, machine_names)))
 dev.off()
 
 # Round and divide values
@@ -99,6 +50,6 @@ desc <- data.frame(machine=summary$machine,
                    spec=paste0(info$freq, "-", info$turbo),
                    tdp=paste0(info$watt, "W"))
 
-# Write table
+# Write tables
 write.taf(desc, dir="report")
 write.taf(summary, dir="report")
