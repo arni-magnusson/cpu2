@@ -53,7 +53,7 @@ desc <- data.frame(machine=summary$machine,
                    work=paste0(format(summary$main2), "-",
                                format(summary$single2)),
                    spike=summary$spike,
-                   spec=paste0(format(info$freq), "-",
+                   spec=paste0(format(info$base), "-",
                                format(info$turbo)))
 
 # Write tables

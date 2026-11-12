@@ -47,7 +47,7 @@ desc <- data.frame(machine=summary$machine,
                    freq.spike=summary$spike,
                    watt.idle=paste0(summary$watt0, "W"),
                    watt.work=paste0(summary$watt2, "-", summary$watt1, "W"),
-                   spec=paste0(info$freq, "-", info$turbo),
+                   spec=paste0(info$base, "-", info$turbo),
                    tdp=paste0(info$watt, "W"))
 
 # Write tables
