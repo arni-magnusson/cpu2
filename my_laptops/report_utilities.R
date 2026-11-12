@@ -17,7 +17,7 @@ plot_points <- function(data, x, y, title, ylab, xlab=NULL,
                         log_x=FALSE, log_y=FALSE, y_limits=NULL,
                         y_breaks=NULL, y_labels=NULL) {
   p <- ggplot(data,
-              aes(x=!!rlang::sym(x), y=!!rlang::sym(y), fill=Form)) +
+              aes(x=.data[[x]], y=.data[[y]], fill=Form)) +
     geom_point(shape=21, color="black", size=2.5, stroke=0.6) +
     scale_fill_manual(values=form_colors, guide="none") +
     labs(title=title, x=xlab, y=ylab) +
