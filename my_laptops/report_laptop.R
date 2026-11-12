@@ -68,19 +68,19 @@ storage_memory_text <- plot_points(
   specs, "Date", "Percentage",
   "Memory tends to be around 2% of storage", "Memory / Storage",
   y_limits=percentage_limits) +
-  geom_hline(yintercept=0.02, linetype=3) +
+  geom_hline(yintercept=0.02, linetype=2, color="#0072B2", linewidth=0.9) +
   geom_text(data=data.frame(
-    Date=c(specs$Date[1] + 130, specs$Date[1] + 120,
+    Date=c(specs$Date[1], specs$Date[1],
            specs$Date[2], specs$Date[2],
-           specs$Date[nrow(specs)] - 80, specs$Date[nrow(specs)] - 30),
-    Percentage=c(specs$Percentage[1] + 0.004, specs$Percentage[1] - 0.004,
-                 specs$Percentage[2] + 0.004, specs$Percentage[2] - 0.004,
-                 specs$Percentage[nrow(specs)] + 0.004,
-                 specs$Percentage[nrow(specs)] - 0.004),
+           specs$Date[nrow(specs)], specs$Date[nrow(specs)]),
+    Percentage=c(specs$Percentage[1] + 0.0025, specs$Percentage[1] - 0.0025,
+                 specs$Percentage[2] + 0.0025, specs$Percentage[2] - 0.0025,
+                 specs$Percentage[nrow(specs)] + 0.0025,
+                 specs$Percentage[nrow(specs)] - 0.0025),
     label=c("512 MB\nRAM", "40 GB\nHDD", "4 GB\nRAM", "100 GB\nHDD",
             "64 GB\nRAM", "2 TB\nSSD")),
     aes(x=Date, y=Percentage, label=label), inherit.aes=FALSE,
-    color="darkgray", size=3.5)
+    color="darkgray", size=3, lineheight=1.0)
 save_plot("storage_memory_text", storage_memory_text)
 
 thick_watt <- plot_points(
@@ -91,13 +91,13 @@ thick_watt <- plot_points(
               linewidth=0.9) +
   geom_text(data=rbind(
     data.frame(Height=specs$Height[specs$Laptop == "Lenovo-P1-Gen8"],
-               W=specs$W[specs$Laptop == "Lenovo-P1-Gen8"] + 6,
+               W=specs$W[specs$Laptop == "Lenovo-P1-Gen8"] + 4,
                label="new\npremium\naluminium"),
     data.frame(Height=specs$Height[specs$Laptop == "Lenovo-ThinkPad-T61"],
-               W=specs$W[specs$Laptop == "Lenovo-ThinkPad-T61"] - 6,
+               W=specs$W[specs$Laptop == "Lenovo-ThinkPad-T61"] - 4,
                label="old\nworkstation\nplastic")),
     aes(x=Height, y=W, label=label), inherit.aes=FALSE,
-    color="darkgray", size=3.5)
+    color="darkgray", size=3, lineheight=1.1)
 save_plot("thick_watt", thick_watt)
 
 # Format specs

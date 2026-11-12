@@ -24,8 +24,10 @@ plot_points <- function(data, x, y, title, ylab, xlab=NULL,
   if (log_x)
     p <- p + scale_x_log10()
 
-  if (log_y && !is.null(y_breaks)) {
+  if (log_y && !is.null(y_breaks) && !is.null(y_labels)) {
     p <- p + scale_y_log10(breaks=y_breaks, labels=y_labels)
+  } else if (log_y && !is.null(y_breaks)) {
+    p <- p + scale_y_log10(breaks=y_breaks)
   } else if (log_y) {
     p <- p + scale_y_log10()
   } else if (!is.null(y_breaks) && !is.null(y_labels)) {

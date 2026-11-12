@@ -3,7 +3,7 @@
 # Before: specs.csv, speed_fit.csv (output)
 # After:  cpu_cache.png, cpu_cores.png, cpu_freq.png, cpu_nm.png,
 #         cpu_speed_data.png, cpu_speed_fit.png, cpu_speed_nm.png,
-#         cpu_speed_watt_nm.png, cpu_threads.png, cpu_watt.png (report)
+#         cpu_efficiency.png, cpu_threads.png, cpu_watt.png (report)
 
 library(TAF)
 source("report_utilities.R")
@@ -72,7 +72,7 @@ save_plot("cpu_speed_nm",
               "Score (PassMark single thread)", xlab="sqrt(Process node)",
               log_y=TRUE, y_limits=c(350, 5000)))
 
-save_plot("cpu_speed_watt_nm",
-  plot_points(specs, "Date", "Efficiency", "CPU: Processor efficiency",
-              "Single-thread performance per watt", xlab="Year",
+save_plot("cpu_efficiency",
+  plot_points(specs, "Date", "Efficiency", "CPU: Efficiency",
+              "Single-thread performance per watt",
               log_y=TRUE, y_limits=c(4.4, 160)))
