@@ -23,35 +23,47 @@ catage$processor <- ordered(catage$processor, catage$processor)
 passmark$processor <- ordered(passmark$processor, passmark$processor)
 regression$processor <- ordered(regression$processor, regression$processor)
 
+# Match the report style used in the other benchmark workflows
+plot_theme <- theme_minimal(base_size=12) +
+  theme(panel.grid.major.y=element_blank(),
+        panel.grid.minor=element_blank(),
+        plot.title.position="plot",
+        plot.title=element_text(face="bold", hjust=0.5))
+plot_colors <- c(Local="#0072B2", Online="#D55E00",
+                 Actual="#0072B2",
+                 "Expectation, based on\nlocal synthetic benchmark"="#D55E00")
+
 # Plot benchmark results
 benchmark <- rbind(data.frame(processor=passmark$processor,
                               source="Local", score=passmark$local),
                    data.frame(processor=passmark$processor,
                               source="Online", score=passmark$online))
 benchmark$source <- factor(benchmark$source, levels=c("Local", "Online"))
-benchmark.plot <- ggplot(benchmark, aes(x=processor, y=score, fill=source)) +
-  geom_col(position=position_dodge(width=0.8), width=0.7, colour="black") +
-  scale_fill_manual(values=c(Local="gray", Online="white")) +
-  labs(title="Synthetic benchmark results", x=NULL,
-       y="Score (PassMark single thread)", fill=NULL) +
-  theme_minimal() +
-  theme(legend.position="top")
 taf.png("benchmark")
-print(benchmark.plot)
+print(ggplot(benchmark, aes(x=score, y=processor, fill=source)) +
+  geom_col(position=position_dodge(width=0.75, reverse=TRUE), width=0.65) +
+  scale_fill_manual(values=plot_colors[c("Local", "Online")], name=NULL) +
+  scale_x_continuous(expand=expansion(mult=c(0, 0.12))) +
+  labs(title="Synthetic benchmark results",
+       x="Score (PassMark single thread)", y=NULL) +
+  plot_theme +
+  theme(legend.position="right"))
 dev.off()
 
 # Plot regression results
 xlim <- c(0.9, 1.1) * range(regression$passmark)
 ylim <- c(0.95, 1.05) * range(regression$actual)
 regression.plot <- ggplot(regression, aes(x=passmark, y=actual)) +
-  geom_abline(intercept=0, slope=regression$slope[1], linetype="dashed") +
-  geom_point() +
+  geom_abline(intercept=0, slope=regression$slope[1],
+              color=plot_colors["Expectation, based on\nlocal synthetic benchmark"],
+              linetype="dashed", linewidth=1) +
+  geom_point(color=plot_colors["Actual"], size=2.2) +
   geom_text(aes(label=processor), vjust=-0.7, size=3) +
   coord_cartesian(xlim=xlim, ylim=ylim) +
   labs(title="Actual speed vs. expectation based on synthetic benchmark",
        x="Synthetic benchmark score",
        y="Actual speed (model iterations / sec)") +
-  theme_minimal()
+  plot_theme
 taf.png("regression")
 print(regression.plot)
 dev.off()
@@ -65,16 +77,15 @@ speed <- rbind(data.frame(processor=catage$processor,
 speed$estimate <- factor(speed$estimate,
                          levels=c("Actual",
                                   "Expectation, based on\nlocal synthetic benchmark"))
-speed.plot <- ggplot(speed, aes(x=processor, y=speed, fill=estimate)) +
-  geom_col(position=position_dodge(width=0.8), width=0.7, colour="black") +
-  scale_fill_manual(values=c("Actual"="gray",
-                             "Expectation, based on\nlocal synthetic benchmark"="white")) +
-  labs(title="Actual speed vs. expectation based on synthetic benchmark",
-       x=NULL, y="Speed (model iterations / sec)", fill=NULL) +
-  theme_minimal() +
-  theme(legend.position="top")
 taf.png("speed")
-print(speed.plot)
+print(ggplot(speed, aes(x=speed, y=processor, fill=estimate)) +
+  geom_col(position=position_dodge(width=0.75, reverse=TRUE), width=0.65) +
+  scale_fill_manual(values=plot_colors[levels(speed$estimate)], name=NULL) +
+  scale_x_continuous(expand=expansion(mult=c(0, 0.12))) +
+  labs(title="Actual speed vs. expectation based on synthetic benchmark",
+       x="Speed (model iterations / sec)", y=NULL) +
+  plot_theme +
+  theme(legend.position="right"))
 dev.off()
 
 # Round tables
