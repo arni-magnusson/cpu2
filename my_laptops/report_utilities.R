@@ -5,7 +5,10 @@ library(ggplot2)
 plot_theme <- theme_minimal(base_size=12) +
   theme(panel.grid.minor=element_blank(),
         plot.title.position="plot",
-        plot.title=element_text(face="bold", hjust=0.5))
+        plot.title=element_text(face="bold", hjust=0.5,
+                               margin=margin(b=18)),
+        axis.title.x=element_text(margin=margin(t=8)),
+        axis.title.y=element_text(margin=margin(r=8)))
 
 # Preserve the original plot fill coding for laptop form
 form_colors <- c(Ultraportable="white", Intermediate="gray", Workstation="black")

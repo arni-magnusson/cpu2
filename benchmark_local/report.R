@@ -6,6 +6,7 @@
 
 library(TAF)
 library(ggplot2)
+source("utilities.R")
 
 mkdir("report")
 
@@ -19,10 +20,6 @@ machine_labels <- setNames(
   paste(info$name, paste("Intel", gsub(" ", "-", info$processor)), sep="\n"),
   info$machine)
 machine_names <- setNames(info$name, info$machine)
-plot_theme <- theme_minimal(base_size=12) +
-  theme(panel.grid.major.y=element_blank(),
-        panel.grid.minor=element_blank(),
-        plot.title=element_text(face="bold", hjust=0.5))
 quantity_colors <- c(single="#0072B2", multi="#D55E00",
                      physical="#009E73", effective="#C4A000")
 machine_order <- c("m4700", "p3560", "p15gen1", "p1gen8")
@@ -36,7 +33,7 @@ print(ggplot(single, aes(x=single, y=machine)) +
   scale_y_discrete(labels=machine_labels) +
   labs(title="Single-thread benchmark",
        x="Score (PassMark single thread)", y=NULL) +
-  plot_theme)
+  plot_theme())
 dev.off()
 
 # Multithread
@@ -48,7 +45,7 @@ print(ggplot(multi, aes(x=multi, y=machine)) +
   scale_y_discrete(labels=machine_labels) +
   labs(title="Multithread benchmark",
        x="Score (PassMark multithread)", y=NULL) +
-  plot_theme)
+  plot_theme())
 dev.off()
 
 # Effective cores
@@ -69,7 +66,7 @@ print(ggplot(effective_long, aes(x=score, y=machine, fill=type)) +
   scale_x_continuous(expand=expansion(mult=c(0, 0.22))) +
   labs(title="Effective core index = multithread score / single-thread score",
        x="Cores / index", y=NULL) +
-  plot_theme +
+  plot_theme() +
   theme(legend.position=c(0.98, 0.02),
         legend.justification=c(1, 0),
         legend.direction="vertical",
@@ -92,7 +89,7 @@ print(ggplot(memory, aes(x=memory, y=machine)) +
   geom_col(fill="#0072B2", width=0.65) +
   scale_y_discrete(labels=labels) +
   labs(title="Memory benchmark", x="Score", y=NULL) +
-  plot_theme)
+  plot_theme())
 dev.off()
 
 memory_long <- reshape(memory,
@@ -128,6 +125,6 @@ print(ggplot(memory_long, aes(x=relative, y=machine, fill=metric)) +
   scale_x_continuous(limits=c(0, 125), breaks=seq(0, 100, 20)) +
   labs(title="Memory details",
        x="Relative performance (% of best result)", y=NULL) +
-  plot_theme +
+  plot_theme() +
   theme(legend.position="top"))
 dev.off()

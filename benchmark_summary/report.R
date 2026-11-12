@@ -6,6 +6,7 @@
 
 library(TAF)
 library(ggplot2)
+source("utilities.R")
 
 mkdir("report")
 
@@ -24,11 +25,6 @@ passmark$processor <- ordered(passmark$processor, passmark$processor)
 regression$processor <- ordered(regression$processor, regression$processor)
 
 # Match the report style used in the other benchmark workflows
-plot_theme <- theme_minimal(base_size=12) +
-  theme(panel.grid.major.y=element_blank(),
-        panel.grid.minor=element_blank(),
-        plot.title.position="plot",
-        plot.title=element_text(face="bold", hjust=0.5))
 plot_colors <- c(Local="#0072B2", Online="#D55E00",
                  Actual="#0072B2",
                  "Expectation, based on\nlocal synthetic benchmark"="#D55E00")
@@ -54,7 +50,7 @@ print(ggplot(benchmark, aes(x=score, y=processor, fill=source)) +
   scale_x_continuous(expand=expansion(mult=c(0, 0.12))) +
   labs(title="Synthetic benchmark results",
        x="Score (PassMark single thread)", y=NULL) +
-  plot_theme +
+  plot_theme() +
   theme(legend.position="right"))
 dev.off()
 
@@ -71,7 +67,7 @@ regression.plot <- ggplot(regression, aes(x=passmark, y=actual)) +
   labs(title="Actual speed vs. expectation based on synthetic benchmark",
        x="Synthetic benchmark score",
        y="Actual speed (model iterations / sec)") +
-  plot_theme
+  plot_theme()
 taf.png("regression")
 print(regression.plot)
 dev.off()
@@ -94,7 +90,7 @@ print(ggplot(speed, aes(x=speed, y=processor, fill=estimate)) +
   scale_x_continuous(expand=expansion(mult=c(0, 0.12))) +
   labs(title="Actual speed vs. expectation based on synthetic benchmark",
        x="Speed (model iterations / sec)", y=NULL) +
-  plot_theme +
+  plot_theme() +
   theme(legend.position="right"))
 dev.off()
 

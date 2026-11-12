@@ -5,8 +5,11 @@ company_colors <- c(Apple="#080808", Intel="#0072B2", AMD="#D55E00")
 plot_theme <- function() {
   theme_minimal(base_size=12) +
     theme(panel.grid.minor=element_blank(),
-          plot.title=element_text(face="bold", hjust=0.5),
-          plot.title.position="plot")
+          plot.title=element_text(face="bold", hjust=0.5,
+                                 margin=margin(b=18)),
+          plot.title.position="plot",
+          axis.title.x=element_text(margin=margin(t=8)),
+          axis.title.y=element_text(margin=margin(r=8)))
 }
 
 legend_inside <- theme(legend.position=c(0.02, 0.98),

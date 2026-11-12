@@ -5,6 +5,7 @@
 
 library(TAF)
 library(ggplot2)
+source("utilities.R")
 
 mkdir("report")
 
@@ -34,15 +35,7 @@ print(ggplot(catage, aes(x=speed, y=machine, fill=job)) +
   scale_x_continuous(expand=expansion(mult=c(0, 0.12))) +
   labs(title="Speed measurements",
        x="Speed (model iterations / sec)", y=NULL) +
-  theme_minimal(base_size=12) +
-  theme(panel.grid.major.y=element_blank(),
-        panel.grid.minor=element_blank(),
-        legend.position=c(0.98, 0.02),
-        legend.justification=c(1, 0),
-        legend.direction="vertical",
-        legend.background=element_rect(fill="white", color=NA),
-        plot.title.position="plot",
-        plot.title=element_text(face="bold", hjust=0.5)))
+  plot_theme())
 dev.off()
 
 # Prepare summary table
