@@ -1,5 +1,5 @@
 # Plot laptop variables
-
+#
 # Before: specs.csv (output)
 # After:  laptop_display.png, laptop_memory.png, laptop_power.png,
 #         laptop_storage.png, laptop_thick.png, laptop_weight.png,
@@ -8,6 +8,7 @@
 
 library(TAF)
 library(knitr)
+source("report_utilities.R")
 
 mkdir("report")
 
@@ -15,96 +16,94 @@ mkdir("report")
 specs <- read.taf("output/specs.csv", colClasses=c(Date="Date"))
 
 # Plot laptop variables
-taf.png("laptop_display")
-plot(Disp~Date, specs, pch=21, bg=bg, yaxt="n", ylim=c(13,16.2),
-     main="Laptop: Display", ylab="Screen size (in)")
-axis(2, c(13, 14, 15, 16))
-dev.off()
+save_plot("laptop_display",
+  plot_points(specs, "Date", "Disp", "Laptop: Display",
+              "Screen size (in)", y_limits=c(13, 16.2),
+              y_breaks=c(13, 14, 15, 16)))
 
-taf.png("laptop_memory")
-plot(RAM~Date, specs, log="y", pch=21, bg=bg, yaxt="n", ylim=c(0.4, 75),
-     main="Laptop: Memory", ylab="Memory (GB)")
-values <- c("0.5", "1", "2", "4", "8", "16", "32", "64")
-axis(2, as.numeric(values), values)
-dev.off()
+memory_breaks <- c("0.5", "1", "2", "4", "8", "16", "32", "64")
+save_plot("laptop_memory",
+  plot_points(specs, "Date", "RAM", "Laptop: Memory", "Memory (GB)",
+              log_y=TRUE, y_limits=c(0.4, 75),
+              y_breaks=as.numeric(memory_breaks), y_labels=memory_breaks))
 
-taf.png("laptop_power")
-plot(Power~Date, specs, ylim=lim(Power), pch=21, bg=bg,
-     main="Laptop: Power adapter", ylab="Power (W)")
-dev.off()
+save_plot("laptop_power",
+  plot_points(specs, "Date", "Power", "Laptop: Power adapter",
+              "Power (W)", y_limits=lim(specs$Power)))
 
-taf.png("laptop_storage")
-plot(Storage~Date, specs, log="y", pch=21, bg=bg, yaxt="n", ylim=c(0.03, 4),
-     main="Laptop: Storage drive", ylab="Storage (TB)")
-values <- c("0.05", "0.1", "0.2", "0.5", "1", "2", "4")
-axis(2, as.numeric(values), values)
-dev.off()
+storage_breaks <- c("0.05", "0.1", "0.2", "0.5", "1", "2", "4")
+save_plot("laptop_storage",
+  plot_points(specs, "Date", "Storage", "Laptop: Storage drive",
+              "Storage (TB)", log_y=TRUE, y_limits=c(0.03, 4),
+              y_breaks=as.numeric(storage_breaks), y_labels=storage_breaks))
 
-taf.png("laptop_thick")
-plot(Height~Date, specs, ylim=lim(Height), pch=21, bg=bg, yaxs="i",
-     main="Laptop: Thickness", ylab="Height (cm)")
-dev.off()
+save_plot("laptop_thick",
+  plot_points(specs, "Date", "Height", "Laptop: Thickness", "Height (cm)",
+              y_limits=lim(specs$Height), y_breaks=pretty(specs$Height)))
 
-taf.png("laptop_weight")
-plot(Weight~Date, specs, ylim=lim(Weight), pch=21, bg=bg,
-     main="Laptop: Weight", ylab="Weight (kg)")
-dev.off()
+save_plot("laptop_weight",
+  plot_points(specs, "Date", "Weight", "Laptop: Weight", "Weight (kg)",
+              y_limits=lim(specs$Weight)))
 
 # Plot screen variables
-taf.png("screen_density")
-plot(ppi~Date, specs, log="y", pch=21, bg=bg, ylim=c(80, 300),
-     main="Laptop: Pixel density", ylab="Density (PPI)")
-dev.off()
+save_plot("screen_density",
+  plot_points(specs, "Date", "ppi", "Laptop: Pixel density",
+              "Density (PPI)", log_y=TRUE, y_limits=c(80, 300)))
 
-taf.png("screen_pixels")
-plot(h~Date, specs, log="y", pch=21, bg=bg, yaxt="n", ylim=c(720, 2550),
-     main="Laptop: Screen resolution", ylab="Vertical pixels")
-axis(2, c(768, 1080, 1440, 2400))
-dev.off()
+pixel_breaks <- c(768, 1080, 1440, 2400)
+save_plot("screen_pixels",
+  plot_points(specs, "Date", "h", "Laptop: Screen resolution",
+              "Vertical pixels", log_y=TRUE, y_limits=c(720, 2550),
+              y_breaks=pixel_breaks))
 
 # Relationship between variables
-taf.png("storage_memory_prop")
-specs$Percentage <- specs$RAM / (1000*specs$Storage)
-plot(Percentage~Date, specs, pch=21, bg=bg, ylim=lim(Percentage, 1.15),
-     main="Memory tends to be around 2% of storage", ylab="Memory / Storage")
-dev.off()
+specs$Percentage <- specs$RAM / (1000 * specs$Storage)
+percentage_limits <- lim(specs$Percentage, 1.15)
+save_plot("storage_memory_prop",
+  plot_points(specs, "Date", "Percentage",
+              "Memory tends to be around 2% of storage",
+              "Memory / Storage", y_limits=percentage_limits))
 
-taf.png("storage_memory_text")
-specs$Percentage <- specs$RAM / (1000*specs$Storage)
-plot(Percentage~Date, specs, pch=21, bg=bg, ylim=lim(Percentage, 1.15),
-     main="Memory tends to be around 2% of storage", ylab="Memory / Storage")
-abline(h=0.02, lty=3)
-n <- nrow(specs)
-text(specs$Date[1]+130, specs$Percentage[1]+0.004, "512 MB\nRAM", cex=0.9,
-     col="darkgray")
-text(specs$Date[1]+120, specs$Percentage[1]-0.004, "40 GB\nHDD", cex=0.9,
-     col="darkgray")
-text(specs$Date[2], specs$Percentage[2]+0.004, "4 GB\nRAM", cex=0.9,
-     col="darkgray")
-text(specs$Date[2], specs$Percentage[2]-0.004, "100 GB\nHDD", cex=0.9,
-     col="darkgray")
-text(specs$Date[n]-80, specs$Percentage[n]+0.004, "64 GB\nRAM", cex=0.9,
-     col="darkgray")
-text(specs$Date[n]-30, specs$Percentage[n]-0.004, "2 TB\nSSD", cex=0.9,
-     col="darkgray")
-dev.off()
+storage_memory_text <- plot_points(
+  specs, "Date", "Percentage",
+  "Memory tends to be around 2% of storage", "Memory / Storage",
+  y_limits=percentage_limits) +
+  geom_hline(yintercept=0.02, linetype=3) +
+  geom_text(data=data.frame(
+    Date=c(specs$Date[1] + 130, specs$Date[1] + 120,
+           specs$Date[2], specs$Date[2],
+           specs$Date[nrow(specs)] - 80, specs$Date[nrow(specs)] - 30),
+    Percentage=c(specs$Percentage[1] + 0.004, specs$Percentage[1] - 0.004,
+                 specs$Percentage[2] + 0.004, specs$Percentage[2] - 0.004,
+                 specs$Percentage[nrow(specs)] + 0.004,
+                 specs$Percentage[nrow(specs)] - 0.004),
+    label=c("512 MB\nRAM", "40 GB\nHDD", "4 GB\nRAM", "100 GB\nHDD",
+            "64 GB\nRAM", "2 TB\nSSD")),
+    aes(x=Date, y=Percentage, label=label), inherit.aes=FALSE,
+    color="darkgray", size=3.5)
+save_plot("storage_memory_text", storage_memory_text)
 
-taf.png("thick_watt")
-plot(W~Height, specs, pch=21, bg=bg,
-     main="Processor power and laptop thickness", xlab="Thickness (cm)",
-     ylab="Thermal design power (W)")
-abline(lm(W~Height, specs))
-p1gen8 <- specs[specs$Laptop == "Lenovo-P1-Gen8",]
-t61 <- specs[specs$Laptop == "Lenovo-ThinkPad-T61",]
-text(p1gen8$Height, p1gen8$W+6, "new\npremium\naluminium", cex=0.9,
-     col="darkgray")
-text(t61$Height, t61$W-6, "old\nworkstation\nplastic", cex=0.9, col="darkgray")
-dev.off()
+thick_watt <- plot_points(
+  specs, "Height", "W", "Processor power and laptop thickness",
+  "Thermal design power (W)", xlab="Thickness (cm)") +
+  geom_abline(intercept=coef(lm(W ~ Height, specs))[1],
+              slope=coef(lm(W ~ Height, specs))[2], color="#0072B2",
+              linewidth=0.9) +
+  geom_text(data=rbind(
+    data.frame(Height=specs$Height[specs$Laptop == "Lenovo-P1-Gen8"],
+               W=specs$W[specs$Laptop == "Lenovo-P1-Gen8"] + 6,
+               label="new\npremium\naluminium"),
+    data.frame(Height=specs$Height[specs$Laptop == "Lenovo-ThinkPad-T61"],
+               W=specs$W[specs$Laptop == "Lenovo-ThinkPad-T61"] - 6,
+               label="old\nworkstation\nplastic")),
+    aes(x=Height, y=W, label=label), inherit.aes=FALSE,
+    color="darkgray", size=3.5)
+save_plot("thick_watt", thick_watt)
 
 # Format specs
 specs$Hybrid[specs$Hybrid == "-"] <- ""
 specs$Cores <- paste0(specs$Cores, specs$Hybrid)
-cols <- c("Date", "Laptop", "Model", "Cores", "Turbo", "RAM", "Storage","W")
+cols <- c("Date", "Laptop", "Model", "Cores", "Turbo", "RAM", "Storage", "W")
 specs <- specs[cols]
 names(specs)[names(specs) == "Date"] <- "Year"
 names(specs)[names(specs) == "Model"] <- "Processor"
