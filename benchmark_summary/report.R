@@ -32,6 +32,11 @@ plot_theme <- theme_minimal(base_size=12) +
 plot_colors <- c(Local="#0072B2", Online="#D55E00",
                  Actual="#0072B2",
                  "Expectation, based on\nlocal synthetic benchmark"="#D55E00")
+processor_labels <- c(
+  "i7-3740QM"="Dell Precision M4700\nIntel i7-3740QM",
+  "i7-10875H"="Lenovo P15 Gen 1\nIntel i7-10875H",
+  "i7-1165G7"="Dell Precision 3560\nIntel i7-1165G7",
+  "u9-285H"="Lenovo P1 Gen 8\nIntel u9-285H")
 
 # Plot benchmark results
 benchmark <- rbind(data.frame(processor=passmark$processor,
@@ -42,7 +47,10 @@ benchmark$source <- factor(benchmark$source, levels=c("Local", "Online"))
 taf.png("benchmark")
 print(ggplot(benchmark, aes(x=score, y=processor, fill=source)) +
   geom_col(position=position_dodge(width=0.75, reverse=TRUE), width=0.65) +
-  scale_fill_manual(values=plot_colors[c("Local", "Online")], name=NULL) +
+  scale_y_discrete(labels=processor_labels) +
+  scale_fill_manual(values=plot_colors[c("Local", "Online")],
+                    breaks=c("Local", "Online"),
+                    labels=c("Local laptop", "Online average"), name=NULL) +
   scale_x_continuous(expand=expansion(mult=c(0, 0.12))) +
   labs(title="Synthetic benchmark results",
        x="Score (PassMark single thread)", y=NULL) +
@@ -72,15 +80,17 @@ dev.off()
 speed <- rbind(data.frame(processor=catage$processor,
                           estimate="Actual", speed=catage$speed),
                data.frame(processor=catage$processor,
-                          estimate="Expectation, based on\nlocal synthetic benchmark",
+                          estimate="Expected",
                           speed=catage$expected))
 speed$estimate <- factor(speed$estimate,
-                         levels=c("Actual",
-                                  "Expectation, based on\nlocal synthetic benchmark"))
+                         levels=c("Actual", "Expected"))
 taf.png("speed")
 print(ggplot(speed, aes(x=speed, y=processor, fill=estimate)) +
   geom_col(position=position_dodge(width=0.75, reverse=TRUE), width=0.65) +
-  scale_fill_manual(values=plot_colors[levels(speed$estimate)], name=NULL) +
+  scale_y_discrete(labels=processor_labels) +
+  scale_fill_manual(values=c(Actual=unname(plot_colors["Actual"]),
+                             Expected=unname(plot_colors["Expectation, based on\nlocal synthetic benchmark"])),
+                    name=NULL) +
   scale_x_continuous(expand=expansion(mult=c(0, 0.12))) +
   labs(title="Actual speed vs. expectation based on synthetic benchmark",
        x="Speed (model iterations / sec)", y=NULL) +
