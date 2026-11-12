@@ -87,6 +87,7 @@ plot_comparison <- function(data, machine_labels) {
     guides(color=guide_legend(override.aes=list(linetype=1,
                                                 linewidth=1.2, alpha=1))) +
     scale_x_continuous(limits=c(0, 300), breaks=seq(0, 300, 100)) +
+    scale_y_continuous(limits=c(0, NA), expand=expansion(mult=c(0, 0.05))) +
     labs(title="CPU monitoring by machine and workload",
          x="Iteration", y=NULL) +
     monitor_theme() +
@@ -104,6 +105,7 @@ plot_each <- function(data) {
     guides(color=guide_legend(override.aes=list(linetype=1,
                                                 linewidth=1.2, alpha=1))) +
     scale_x_continuous(limits=c(0, 300), breaks=seq(0, 300, 100)) +
+    scale_y_continuous(limits=c(0, NA), expand=expansion(mult=c(0, 0.05))) +
     labs(title="Machine measurements by workload",
          x="Iteration", y=NULL) +
     monitor_theme() +
