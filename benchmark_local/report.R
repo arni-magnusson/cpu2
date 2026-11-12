@@ -22,7 +22,7 @@ machine_labels <- setNames(
 machine_names <- setNames(info$name, info$machine)
 quantity_colors <- c(single="#0072B2", multi="#D55E00",
                      physical="#009E73", effective="#C4A000")
-machine_order <- c("m4700", "p3560", "p15gen1", "p1gen8")
+machine_order <- c("m4700", "p15gen1", "p3560", "p1gen8")
 
 # Single thread
 single <- passmark[order(passmark$single),]
@@ -82,7 +82,7 @@ memory <- memory[c("machine", "memory", "database", "readcache", "read",
 labels <- setNames(paste0(machine_names[memory$machine], "\n",
                           memory$module, " (", memory$year, ")"),
                    memory$machine)
-memory$machine <- factor(memory$machine, levels=memory$machine)
+memory$machine <- factor(memory$machine, levels=machine_order)
 
 taf.png("memory_benchmark")
 print(ggplot(memory, aes(x=memory, y=machine)) +
