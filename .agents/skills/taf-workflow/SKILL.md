@@ -1,5 +1,5 @@
 ---
-name: taf-workflows
+name: taf-workflow
 description: Instructions for AI agent on how to modify, and run TAF workflows.
 ---
 
