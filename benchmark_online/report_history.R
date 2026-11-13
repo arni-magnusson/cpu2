@@ -1,7 +1,7 @@
 # Plot long-term historical trends
 
 # Before: history.csv (data)
-#         history_analysis.csv, history_fit.csv, history.rate.csv (output)
+#         history_analysis.csv, history_fit.csv, history_rate.csv (output)
 # After:  history_companies_nm.png, history_companies_speed.png,
 #         history_data.png, history_fit.png, history_rate.png,
 #         history_time.png (report)

@@ -1,7 +1,8 @@
 # Plot comparison plots for Apple, Intel, and AMD
 
 # Before: apple.csv, companies.csv (data)
-#         companies_fit.csv, companies_lag.csv, i7_high.csv, r7_high (output)
+#         companies_fit.csv, companies_lag.csv, i7_high.csv,
+#         r7_high.csv (output)
 # After:  companies_data.png, companies_fit.png, companies_lag.png,
 #         companies_macbook.png (report)
 
