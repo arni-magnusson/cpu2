@@ -2,7 +2,7 @@
 
 # Before: passmark.csv (output)
 # After:  cpu_benchmark.png, cpu_multicore.png, effective_cores.png,
-#         memory_benchmark.png, memory_detail.png (report)
+#         memory_benchmark.png, memory_details.png (report)
 
 library(TAF)
 library(ggplot2)
