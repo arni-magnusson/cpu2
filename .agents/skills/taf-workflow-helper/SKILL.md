@@ -1,7 +1,6 @@
 ---
 name: taf-workflow-helper
-description: Instructions for AI agent on how to create, modify, and run TAF
-             workflows.
+description: Instructions for AI agent on how to modify, and run TAF workflows.
 ---
 
 # TAF
