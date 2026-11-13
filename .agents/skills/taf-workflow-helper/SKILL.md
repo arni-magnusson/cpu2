@@ -42,8 +42,8 @@ necessary to declare R packages available on CRAN.
 
 Since reproducibility is an important objective in TAF, there is a general
 preference to write workflows with minimal or no dependencies if possible. This
-recommendation applies especially to AI agents, but human authors can use
-whatever packages they find practical.
+recommendation applies especially to AI agents, unless instructed by the
+developer. Human authors can use whatever packages they find practical.
 
 # Running a TAF analysis
 
