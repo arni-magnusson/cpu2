@@ -1,9 +1,9 @@
 # Plot CPU variables
 #
 # Before: specs.csv, speed_fit.csv (output)
-# After:  cpu_cache.png, cpu_cores.png, cpu_freq.png, cpu_nm.png,
-#         cpu_speed_data.png, cpu_speed_fit.png, cpu_speed_nm.png,
-#         cpu_efficiency.png, cpu_threads.png, cpu_watt.png (report)
+# After:  cpu_cache.png, cpu_cores.png, cpu_efficiency.png, cpu_freq.png,
+#         cpu_nm.png, cpu_speed_data.png, cpu_speed_fit.png, cpu_speed_freq.png,
+#         cpu_speed_nm.png, cpu_threads.png, cpu_watt.png (report)
 
 library(TAF)
 source("report_utilities.R")
