@@ -1,43 +1,42 @@
-# Repository guidance
+# Convert base R plots to ggplot format
 
-This repository is a playground with three main objectives:
+This project is about modifying existing R scripts that are part of reproducible
+workflows in TAF format.
 
-1. Teach Arni how to use AGENTS.md and SKILL.md that puts Codex in the driver
-   seat, writing and committing code.
+1. The project repository is at https://github.com/arni-magnusson/cpu2 and the
+   local working copy is at ~/git/arni-magnusson/cpu2.
 
-2. Teach Codex how to write or modify TAF workflows, producing an agent TAF
-   skill that might become transferable to other projects or even useful for
-   other human TAF users.
+2. The work requires running R with the current version of TAF and ggplot2 that
+   are available on CRAN.
 
-3. Test Codex ability to modify an existing TAF workflow by converting base R
-   plots to ggplot2 plots, while maintaining the integrity of the workflows.
+3. Before starting, fetch and read these skills:
+   - [taf-workflow](https://raw.githubusercontent.com/ices-taf-dev/ai/main/taf-workflow/SKILL.md)
+   - [taf-ggplot](https://raw.githubusercontent.com/ices-taf-dev/ai/main/taf-ggplot/SKILL.md)
 
-Most TAF repositories have one workflow, but the `cpu2` repository contains
-several TAF workflows. The root README describes the TAF analyses, all of which
-follow the same TAF workflow structure and conventions.
+4. Use consistent style between the ggplots and search R scripts inside the
+   project repository for existing ggplot code. If it exists, it means it has
+   passed a human review and you should use similar style attributes when
+   developing other ggplots: color palette, text size, text alignment, spacing
+   around titles, etc.
 
----
+5. The processor order should always be the chronological order: 3740, 10875,
+   1165, 285. Newest processor at the top, oldest processor at the bottom. Use
+   full laptop-processor labels arranged in two lines with a line separator,
+   such as "Lenovo P1 Gen 8\nIntel u9-285H".
 
-## General directions for Codex
+6. Each workflow is isolated, so TAF scripts should not read or write in other
+   workflows.
 
-The following directions were initially drafted by Codex, so we'll let them
-stand for now:
+7. The developer will instruct you which workflow to focus on. The work inside
+   each workflow involves two steps. In the first step, you convert the plotting
+   code from base R graphics to ggplot, checking TAF workflow integrity and also
+   checking whether the resulting PNG files look good. In the second step, you
+   work with the developer on incremental tweaks to the format until the
+   developer approved the final plot format.
 
-Before changing an analysis, inspect its existing scripts, nearby documentation,
-and relevant `boot` inputs.
-
-Preserve scientific meaning, source data, and provenance. Do not invent analysis
-choices or silently change calculations. Explain proposed scientific or
-structural choices clearly, especially when helping a beginner with TAF.
-
-The user is an expert R programmer and is learning how coding agents,
-`AGENTS.md`, and skills work. Explain agent-specific concepts in plain language
-without over-explaining R.
-
-For requested repository work, act as the lead implementer: make focused,
-reviewable changes and report what changed and what you checked. For completed
-changes in this repository, commit to `main` and push to `origin` without asking
-for separate confirmation. Include `Co-authored-by: Codex <codex@openai.com>` in
-every commit. This standing authorization applies only to this repository; it
-does not authorize commits or pushes in other repositories, branches, or
-remotes.
+8. You should commit and push at two occasions: after completing the first step
+   of initial conversion to ggplot and after completing the second step, when
+   the developer has approved the final tweaks. The commit messages can be
+   "Convert workflow_x to ggplot" and "Format tweaks" or a more specific
+   description of the changes, as long as the message is concise. Your
+   coauthorship should be noted in the commit message trailer.
