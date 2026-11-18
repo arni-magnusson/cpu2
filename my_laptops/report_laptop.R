@@ -39,7 +39,8 @@ save_plot("laptop_storage",
 
 save_plot("laptop_thick",
   plot_points(specs, "Date", "Height", "Laptop: Thickness", "Height (cm)",
-              y_limits=lim(specs$Height), y_breaks=pretty(specs$Height)))
+              y_limits=c(0, max(specs$Height) * 1.1),
+              y_breaks=c(0, 0.5, 1.0, 2, 3, 4)))
 
 save_plot("laptop_weight",
   plot_points(specs, "Date", "Weight", "Laptop: Weight", "Weight (kg)",
@@ -48,7 +49,9 @@ save_plot("laptop_weight",
 # Plot screen variables
 save_plot("screen_density",
   plot_points(specs, "Date", "ppi", "Laptop: Pixel density",
-              "Density (PPI)", log_y=TRUE, y_limits=c(80, 300)))
+              "Density (PPI)", log_y=TRUE, y_limits=c(80, 300),
+              y_breaks=function(limits)
+                sort(unique(c(scales::log_breaks()(limits), 150)))))
 
 pixel_breaks <- c(768, 1080, 1440, 2400)
 save_plot("screen_pixels",

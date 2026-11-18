@@ -15,7 +15,8 @@ form_colors <- c(Ultraportable="white", Intermediate="gray", Workstation="black"
 
 plot_points <- function(data, x, y, title, ylab, xlab=NULL,
                         log_x=FALSE, log_y=FALSE, y_limits=NULL,
-                        y_breaks=NULL, y_labels=NULL) {
+                        y_breaks=NULL, y_labels=NULL, x_breaks=NULL,
+                        x_labels=NULL, x_limits=NULL) {
   p <- ggplot(data,
               aes(x=.data[[x]], y=.data[[y]], fill=Form)) +
     geom_point(shape=21, color="black", size=2.5, stroke=0.6) +
@@ -24,8 +25,14 @@ plot_points <- function(data, x, y, title, ylab, xlab=NULL,
     plot_theme +
     coord_cartesian(ylim=y_limits)
 
-  if (log_x)
-    p <- p + scale_x_log10()
+  if (log_x && !is.null(x_breaks) && !is.null(x_labels)) {
+    p <- p + scale_x_log10(breaks=x_breaks, labels=x_labels,
+                            limits=x_limits)
+  } else if (log_x && !is.null(x_breaks)) {
+    p <- p + scale_x_log10(breaks=x_breaks, limits=x_limits)
+  } else if (log_x) {
+    p <- p + scale_x_log10(limits=x_limits)
+  }
 
   if (log_y && !is.null(y_breaks) && !is.null(y_labels)) {
     p <- p + scale_y_log10(breaks=y_breaks, labels=y_labels)

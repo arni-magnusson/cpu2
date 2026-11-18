@@ -31,7 +31,9 @@ save_plot("cpu_cores",
 
 save_plot("cpu_freq",
   plot_points(specs, "Date", "TurboGHz", "CPU: Maximum frequency",
-              "Turbo (GHz)", log_y=TRUE, y_limits=c(2, 6)))
+              "Turbo (GHz)", log_y=TRUE, y_limits=c(2, 6),
+              y_breaks=function(limits)
+                sort(unique(c(scales::log_breaks()(limits), 4)))))
 
 save_plot("cpu_nm",
   plot_points(specs, "Date", "nm", "CPU: Semiconductor technology",
@@ -40,7 +42,8 @@ save_plot("cpu_nm",
 save_plot("cpu_speed_data",
   plot_points(specs, "Date", "Speed", "CPU: Benchmark performance",
               "Score (PassMark single thread)", log_y=TRUE,
-              y_limits=c(350, 5000)))
+              y_limits=c(350, 5000),
+              y_breaks=c(500, 1000, 2000, 4000)))
 
 thread_breaks <- c(0.9, 2.1, 4, 6, 8, 10, 12, 14, 16)
 save_plot("cpu_threads",
@@ -55,7 +58,8 @@ save_plot("cpu_watt",
 # Fitted historical trend
 speed_fit_plot <- plot_points(
   specs, "Date", "Speed", "CPU: Performance trend",
-  "Score (PassMark single thread)", log_y=TRUE, y_limits=c(350, 5000)) +
+  "Score (PassMark single thread)", log_y=TRUE, y_limits=c(350, 5000),
+  y_breaks=c(500, 1000, 2000, 4000)) +
   geom_line(data=speed.fit, aes(x=Date, y=Speed), inherit.aes=FALSE,
             color="#0072B2", linewidth=0.9)
 save_plot("cpu_speed_fit", speed_fit_plot)
@@ -64,13 +68,17 @@ save_plot("cpu_speed_fit", speed_fit_plot)
 save_plot("cpu_speed_freq",
   plot_points(specs, "TurboGHz", "Speed", "CPU: Frequency and performance",
               "Score (PassMark single thread)", xlab="Turbo (GHz)",
-              log_x=TRUE, log_y=TRUE, y_limits=c(350, 5000)))
+              log_x=TRUE, log_y=TRUE, y_limits=c(350, 5000),
+              x_limits=c(2, NA),
+              x_breaks=c(2, 3, 4, 5),
+              y_breaks=c(500, 1000, 2000, 4000)))
 
 save_plot("cpu_speed_nm",
   plot_points(specs, "SqrtNm", "Speed",
               "CPU: Performance and semiconductor technology",
               "Score (PassMark single thread)", xlab="sqrt(Process node)",
-              log_y=TRUE, y_limits=c(350, 5000)))
+              log_y=TRUE, y_limits=c(350, 5000),
+              y_breaks=c(500, 1000, 2000, 4000)))
 
 save_plot("cpu_efficiency",
   plot_points(specs, "Date", "Efficiency", "CPU: Efficiency",
