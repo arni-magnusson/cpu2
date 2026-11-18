@@ -73,6 +73,6 @@ print(ggplot(apple, aes(x=Date, y=Speed, shape=Type)) +
   geom_point(color=company_colors["Apple"], size=2.4, stroke=1) +
   scale_y_log10() +
   scale_shape_manual(values=c(Pro=16, Air=1), name=NULL) +
-  labs(title="Apple MacBook performance", x=NULL, y=score) +
+  labs(title="MacBook performance", x=NULL, y=score) +
   plot_theme() + legend_inside)
 dev.off()
