@@ -40,7 +40,7 @@ save_plot("laptop_storage",
 save_plot("laptop_thick",
   plot_points(specs, "Date", "Height", "Laptop: Thickness", "Height (cm)",
               y_limits=c(0, max(specs$Height) * 1.1),
-              y_breaks=c(0, 0.5, 1.0, 2, 3, 4)))
+              y_breaks=c(0, 1, 2, 3, 4)))
 
 save_plot("laptop_weight",
   plot_points(specs, "Date", "Weight", "Laptop: Weight", "Weight (kg)",
