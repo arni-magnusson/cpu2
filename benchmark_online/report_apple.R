@@ -27,7 +27,8 @@ score <- "Score (PassMark single thread)"
 taf.png("companies_data", width=1200)
 print(ggplot(companies, aes(x=Date, y=Speed, color=Company)) +
   geom_point(size=2.2, alpha=0.85) +
-  scale_y_log10() +
+  scale_y_log10(breaks=function(limits)
+    sort(unique(c(scales::log_breaks()(limits), 2000)))) +
   scale_color_manual(values=company_colors, breaks=c("Apple", "Intel", "AMD"),
                      name=NULL) +
   labs(title="Single-thread CPU performance",
@@ -41,7 +42,8 @@ print(ggplot(companies, aes(x=Date, y=Speed, color=Company)) +
   geom_point(size=2.2, alpha=0.85) +
   geom_line(data=companies.fit,
             aes(group=Company), linewidth=1.1, inherit.aes=TRUE) +
-  scale_y_log10() +
+  scale_y_log10(breaks=function(limits)
+    sort(unique(c(scales::log_breaks()(limits), 2000)))) +
   scale_color_manual(values=company_colors, breaks=c("Apple", "Intel", "AMD"),
                      name=NULL) +
   guides(color=guide_legend(override.aes=list(linetype=0, linewidth=0, shape=19, size=2.2))) +

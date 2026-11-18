@@ -9,7 +9,7 @@ workload_labels <- c(idle="Idle", single="Single-thread",
 workload_colors <- c(idle="#999999", single="#0072B2",
                      main="#D55E00", full="#009E73")
 metric_order <- c("Freq", "Temp", "Watt")
-metric_labels <- c(Freq="Frequency (MHz)", Temp="Temperature (°C)",
+metric_labels <- c(Freq="Frequency (GHz)", Temp="Temperature (°C)",
                    Watt="Package power (W)")
 
 monitor_theme <- function() {
@@ -32,6 +32,8 @@ comparison_data <- function(machines) {
     for (workload in workload_order) {
       for (machine in machine_order) {
         values <- machines[[machine]][[workload]][[metric]]
+        if (metric == "Freq")
+          values <- values / 1000
         i <- i + 1
         rows[[i]] <- data.frame(machine=machine, workload=workload,
                                 metric=metric,
@@ -48,6 +50,8 @@ comparison_data <- function(machines) {
   })), panels)
   out$panel <- factor(paste(out$metric, out$workload, sep="|"), levels=panels)
   attr(out, "panel_labels") <- labels
+  out$metric <- factor(out$metric, levels=metric_order)
+  out$workload <- factor(out$workload, levels=workload_order)
   out$machine <- factor(out$machine, levels=machine_order)
   out
 }
@@ -59,6 +63,8 @@ each_data <- function(machines, machine_names) {
     for (machine in machine_order) {
       for (workload in workload_order) {
         values <- machines[[machine]][[workload]][[metric]]
+        if (metric == "Freq")
+          values <- values / 1000
         i <- i + 1
         rows[[i]] <- data.frame(machine=machine, workload=workload,
                                 metric=metric,
@@ -75,6 +81,9 @@ each_data <- function(machines, machine_names) {
   })), panels)
   out$panel <- factor(paste(out$metric, out$machine, sep="|"), levels=panels)
   attr(out, "panel_labels") <- labels
+  attr(out, "machine_labels") <- machine_names
+  out$metric <- factor(out$metric, levels=metric_order)
+  out$machine <- factor(out$machine, levels=machine_order)
   out$workload <- factor(out$workload, levels=workload_order)
   out
 }
@@ -82,8 +91,9 @@ each_data <- function(machines, machine_names) {
 plot_comparison <- function(data, machine_labels) {
   ggplot(data, aes(x=iteration, y=value, color=machine)) +
     geom_point(size=0.45, alpha=0.7, key_glyph=draw_key_path) +
-    facet_wrap(~panel, ncol=4, scales="free_y",
-               labeller=as_labeller(attr(data, "panel_labels"))) +
+    facet_grid(metric ~ workload, scales="free_y", switch="y",
+               labeller=labeller(metric=metric_labels,
+                                 workload=workload_labels)) +
     scale_color_manual(values=machine_colors, breaks=machine_order,
                        labels=machine_labels[machine_order]) +
     guides(color=guide_legend(override.aes=list(linetype=1,
@@ -94,14 +104,17 @@ plot_comparison <- function(data, machine_labels) {
          x="Iteration", y=NULL) +
     monitor_theme() +
     theme(strip.text.x=element_text(face="bold", margin=margin(b=10)),
+          strip.placement="outside",
+          strip.text.y.left=element_text(angle=0),
           panel.spacing.y=grid::unit(1.25, "lines"))
 }
 
 plot_each <- function(data) {
   ggplot(data, aes(x=iteration, y=value, color=workload)) +
     geom_point(size=0.45, alpha=0.7, key_glyph=draw_key_path) +
-    facet_wrap(~panel, ncol=4, scales="free_y",
-               labeller=as_labeller(attr(data, "panel_labels"))) +
+    facet_grid(metric ~ machine, scales="free_y", switch="y",
+               labeller=labeller(metric=metric_labels,
+                                 machine=attr(data, "machine_labels"))) +
     scale_color_manual(values=workload_colors, breaks=workload_order,
                        labels=workload_labels[workload_order]) +
     guides(color=guide_legend(override.aes=list(linetype=1,
@@ -112,6 +125,8 @@ plot_each <- function(data) {
          x="Iteration", y=NULL) +
     monitor_theme() +
     theme(strip.text.x=element_text(face="bold", margin=margin(b=10)),
+          strip.placement="outside",
+          strip.text.y.left=element_text(angle=0),
           panel.spacing.y=grid::unit(1.25, "lines"))
 }
 
